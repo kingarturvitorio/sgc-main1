@@ -12,3 +12,6 @@ class ProntuarioForm(forms.ModelForm):
         widgets = {
             'prontuario': forms.Textarea({'class':'form-control', 'rows':20}),
         }
+        labels = {
+            'event': 'Agendamento',
+        }

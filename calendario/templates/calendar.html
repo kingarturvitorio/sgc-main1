@@ -1,0 +1,172 @@
+{% extends "componentes/base_site.html" %}
+{% load static %}
+
+{% block title %}Agendamentos{% endblock title %}
+
+{% block stylesheets %}
+    {{ block.super }}
+    <link href="{% static 'calender/main.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/calendar.css' %}" rel="stylesheet" />
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="right_col" role="main">
+    <div class="">
+        <div class="page-title">
+            <div class="title_left">
+                <h3>Calendário</h3>
+            </div>
+        </div>
+
+        <div class="clearfix"></div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="x_panel">
+                    <div class="x_title">
+                        <h2>Agendamento de Consultas</h2>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content">
+                        <div id="calendar" style="width:100%;"></div>
+                    </div>
+                </div>
+            </div>
+          
+
+            <div class="clearfix"></div>
+            <div class="x_content"></div>
+            
+            <div class="row">
+              <div class="col-md-12">
+                <div class="tile">
+                  <div class="tile-body">
+                    <div class="table-responsive">
+                      <div id="sampleTable_wrapper" class="dataTables_wrapper container-fluid dt-bootstrap4 no-footer">
+                        <div class="row">
+                          <div class="col-sm-12">
+                            <table class="table table-hover table-bordered dataTable no-footer" id="sampleTable" role="grid" aria-describedby="sampleTable_info">
+                              <thead>
+                                <tr role="row">
+                                  <th>Nome Paciente</th>
+                                  <th>Nome Terapeuta</th>
+                                  <th>N° Guia</th>
+                                  <th>Dia e hora início Consulta</th>
+                                </tr>
+                              </thead>
+                              <tbody id="eventTableBody">
+                                <!-- As linhas da tabela serão adicionadas aqui via JavaScript -->
+                                                 <!-- Listando os eventos já existentes -->
+                                  {% for event in events %}
+                                  <tr>
+                                    <td>{{ event.paciente }}</td>
+                                    <td>{{ event.terapeuta }}</td>
+                                    <td>{{ event.guia }}</td>
+                                    <td>{{ event.start_time|date:"d/m/Y H:i" }}</td>
+                                  </tr>
+                                {% endfor %}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Novo Agendamento -->
+<div id="CalenderModalNew" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Adicionar novo agendamento</h4>
+                <button type="button" class="close" data-dismiss="modal">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="newEventForm">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="paciente">Nome Paciente:</label>
+                        {{ form.paciente }}
+                    </div>
+                    <div class="form-group">
+                        <label for="terapeuta">Nome Terapeuta:</label>
+                        {{ form.terapeuta }}
+                    </div>
+                    <div class="form-group">
+                        <label for="cidade">Cidade:</label>
+                        {{ form.cidade }}
+                    </div>
+                    <div class="form-group">
+                        <label for="tipo_terapia">Tipo Terapia:</label>
+                        {{ form.tipo_terapia }}
+                    </div>
+                    <div class="form-group">
+                        <label for="guia">Número da Guia:</label>
+                        {{ form.guia }}
+                    </div>
+                    <div class="form-group">
+                        <label for="start_time">Data Inicial Consulta:</label>
+                        {{ form.start_time }}
+                    </div>
+                    <div class="form-group">
+                        <label for="descricao">Observações:</label>
+                        {{ form.descricao }}
+                    </div>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Editar Agendamento -->
+<div id="CalenderModalEdit" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Editar Agendamento</h4>
+                <button type="button" class="close" data-dismiss="modal">×</button>
+            </div>
+            <div class="modal-body">
+                <row>
+                  <h2>Nome Paciente:</h2>
+                  <p id="nome_paciente"></p>
+                </row>
+                <row>
+                  <h2>Nome Terapeuta:</h2>
+                  <p id="nome_terapeuta"></p>
+                </row>
+                <row>
+                  <h2>Número da Guia:</h2>
+                  <p id="numero_guia"></p>
+                </row>                
+                <row>
+                  <h2>Data inicial e final:</h2>
+                  <p id="start_event_detail"></p>
+                  <p id="end_event_detail"></p>
+                </row>    
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" id="confirmEventBtn">Confirmar Agendamento</button>
+                    <button type="button" class="btn btn-danger" id="deleteEventBtn">Deletar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extrascripts %}
+
+  <script type="text/javascript">
+    const csrfToken = '{{ csrf_token }}';
+  </script>
+    <script src="{% static 'calender/main.js' %}"></script>
+    <script src="{% static 'js/calendar.js' %}"></script>
+{% endblock extrascripts %}

@@ -68,7 +68,7 @@ class Event(models.Model):
 
         # Incrementa a métrica toda vez que um evento é criado
         if not self.pk:  # Se o evento é novo (não tem chave primária ainda)
-            self.metric_count = Event.objects.count() + 1
+            self.metric_count = 1
 
         if self.start_time and not self.end_time:
             self.end_time = self.start_time + timedelta(minutes=30)

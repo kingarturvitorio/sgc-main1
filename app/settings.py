@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'prontuarios',
     'relatorios',
     'calendario',
+    'sitelumini',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'

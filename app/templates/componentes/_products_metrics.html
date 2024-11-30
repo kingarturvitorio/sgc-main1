@@ -1,33 +1,35 @@
 <div class="card mt-4">
     <div class="card-body">
         <div class="row">
-            <div class="col-md-3">
-                <div class="card bg-primary">
+            <!-- Card grande com a quantidade de agendamentos com padding aplicado -->
+            <div class="col-md-12 mb-4">
+                <div class="card bg-primary text-white text-center" style="padding: 5px;"> <!-- Padding inline aqui -->
                     <div class="card-body">
-                        <h5 class="card-title"> Quantidade de agendamentos</h5>
-                        <p class="card-text text-white font-weight-bold display-6">{{ product_metrics.total_event }}</p>
+                        <h5 class="card-title" style="font-size: 1.8rem;">Quantidade de agendamentos</h5>
+                        <p class="card-text font-weight-bold" style="font-size: 3rem;">{{ product_metrics.total_event }}</p>
                     </div>
                 </div>
             </div>
 
-            <div class="col-md-3">
-                <div class="card bg-danger">
+            <!-- Card menor para quantidade de terapeutas com padding e fontes grandes -->
+            <div class="col-md-6">
+                <div class="card bg-danger text-white text-center" style="padding: 5px;">
                     <div class="card-body">
-                        <h5 class="card-title"> Quantidade total de terapeutas</h5>
-                        <p class="card-text text-white font-weight-bold display-6">{{ product_metrics.total_terapeutas }}</p>
+                        <h5 class="card-title" style="font-size: 1.8rem;">Quantidade total de terapeutas</h5>
+                        <p class="card-text font-weight-bold" style="font-size: 3rem;">{{ product_metrics.total_terapeutas }}</p>
                     </div>
                 </div>
             </div>
 
-            <div class="col-md-3">
-                <div class="card bg-success">
+            <!-- Card menor para quantidade de pacientes com padding e fontes grandes -->
+            <div class="col-md-6">
+                <div class="card bg-success text-white text-center" style="padding: 5px;">
                     <div class="card-body">
-                        <h5 class="card-title"> Quantidade total de pacientes</h5>
-                        <p class="card-text text-white font-weight-bold display-6">{{ product_metrics.total_pacientes }}</p>
+                        <h5 class="card-title" style="font-size: 1.8rem;">Quantidade total de pacientes</h5>
+                        <p class="card-text font-weight-bold" style="font-size: 3rem;">{{ product_metrics.total_pacientes }}</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
 </div>

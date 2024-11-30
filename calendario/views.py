@@ -50,7 +50,7 @@ class CalendarView(ListView):
         return context
 
 class ConsultaCreateView(View):
-    template_name = "componentes/calendar.html"
+    template_name = "calendar.html"
     form_class = forms.EventForm
 
     def get(self, request, *args, **kwargs):
@@ -93,31 +93,10 @@ class EventEdit(UpdateView):
                     'tipo_terapia', 'guia', 'start_time', 'end_time', 'descricao']
     template_name = "event.html"
 
-def event_details(request, event_id):
-    event = models.Event.objects.get(id=event_id)
-    eventmember = models.EventMember.objects.filter(event=event)
-    context = {"event": event, "eventmember": eventmember}
-    return render(request, "event-details.html", context)
-
-def add_eventmember(request, event_id):
-    forms = forms.AddMemberForm()
-    if request.method == "POST":
-        forms = forms.AddMemberForm(request.POST)
-        if forms.is_valid():
-            member = models.EventMember.objects.filter(event=event_id)
-            event = models.Event.objects.get(id=event_id)
-            if member.count() <= 9:
-                user = forms.cleaned_data["user"]
-                models.EventMember.objects.create(event=event, user=user)
-                return redirect("calendarapp:calendar")
-            else:
-                print("--------------User limit exceed!-----------------")
-    context = {"form": forms}
-    return render(request, "add_member.html", context)
 
 def create_event(request):
     form = forms.EventForm(request.POST or None)
-    if request.POST and form.is_valid():
+    if request.method == 'POST' and form.is_valid():
         paciente = form.cleaned_data["paciente"]
         terapeuta = form.cleaned_data["terapeuta"]
         cidade = form.cleaned_data["cidade"]
@@ -126,7 +105,9 @@ def create_event(request):
         start_time = form.cleaned_data["start_time"]
         end_time = form.cleaned_data["end_time"]
         descricao = form.cleaned_data["descricao"]
-        models.Event.objects.get_or_create(
+        
+        # Cria o evento no banco de dados
+        event, created = models.Event.objects.get_or_create(
             paciente=paciente,
             terapeuta=terapeuta,
             cidade=cidade,
@@ -136,13 +117,24 @@ def create_event(request):
             end_time=end_time,
             descricao=descricao,
         )
-        return HttpResponseRedirect(reverse("calendario:calendar"))
-    return render(request, "event.html", {"form": form}) ##formulario de envio para salvar
+        
+        # Serializa os dados para JSON
+        return JsonResponse({
+            'id': event.id,
+            'title': str(paciente),  # Pode usar `str()` para converter para string
+            'start': event.start_time.strftime('%Y-%m-%dT%H:%M:%S'),
+            'end': event.end_time.strftime('%Y-%m-%dT%H:%M:%S'),
+            'backgroundColor': 'blue',  # ou outra cor padrão
+            'borderColor': 'blue',
+            'paciente': str(paciente),  # Serializa o nome ou outro atributo
+            'terapeuta': str(terapeuta),  # Serializa o nome ou outro atributo
+            'guia': str(guia),  # Serializa o nome ou outro atributo
+            'descricao': descricao
+        })
+    
+    return render(request, "event.html", {"form": form})
 
-class EventMemberDeleteView(DeleteView):
-    model = models.EventMember
-    template_name = "event_delete.html"
-    success_url = reverse_lazy("calendario:calendar")
+
 
 def delete_event(request, event_id):
     event = get_object_or_404(models.Event, id=event_id)
@@ -188,21 +180,25 @@ def next_day(request, event_id):
     else:
         return JsonResponse({'message': 'Error!'}, status=400)
     
-class AllEventsListView(ListView):
-    """ All event list views """
 
-    template_name = "calendarapp/events_list.html"
-    model = models.Event
+def get_events(request):
+    events = models.Event.objects.all()
+    events_list = []
 
-    def get_queryset(self):
-        return models.Event.objects.get_all_events(user=self.request.user)
-
-
-class RunningEventsListView(ListView):
-    """ Running events list view """
-
-    template_name = "calendarapp/events_list.html"
-    model = models.Event
-
-    def get_queryset(self):
-        return models.Event.objects.get_running_events(user=self.request.user)
+    for event in events:
+        events_list.append({
+            'id': event.id,
+            'title': event.paciente.nome,  # Adapte conforme o campo do seu modelo
+            'start': event.start_time.isoformat(),
+            'end': event.end_time.isoformat(),
+            'backgroundColor': 'green' if event.confirmado else 'blue',
+            'borderColor': 'green' if event.confirmado else 'blue',
+            'extendedProps': {
+                'paciente': event.paciente.nome,   # Pegando apenas o nome do paciente
+                'terapeuta': str(event.terapeuta.nome_terapeuta),  # Pegando o nome do terapeuta
+                'guia': event.guia,
+                'descricao': event.descricao
+            }
+        })
+    
+    return JsonResponse(events_list, safe=False)
