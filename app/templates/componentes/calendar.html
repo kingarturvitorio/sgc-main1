@@ -1,0 +1,437 @@
+{% extends "componentes/base_site.html" %}
+
+{% load static %}
+{% block title %}Event Calendar{% endblock title %}
+
+{% block stylesheets %}
+{{ block.super }}
+<link href="{% static 'calender/main.css' %}" rel="stylesheet" />
+{% endblock stylesheets %}
+
+
+{% block content %}
+<div class="right_col" role="main">
+  <div class="">
+    <div class="page-title">
+      <div class="title_left">
+        <h3>Calendário</h3>
+      </div>
+
+      <div class="title_right">
+        <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
+          <div class="input-group">
+            <input type="text" class="form-control" placeholder="Procurar agendamento">
+            <span class="input-group-btn">
+              <button class="btn btn-default" type="button">Pesquisar</button>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="clearfix"></div>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="x_panel">
+          <div class="x_title">
+            <h2>Agendamento de Consultas</h2>
+            <ul class="nav navbar-right panel_toolbox">
+              <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+              </li>
+              <li><a class="close-link"><i class="fa fa-close"></i></a>
+              </li>
+            </ul>
+            <div class="clearfix"></div>
+          </div>
+          <div class="x_content">
+
+            <div class="row">
+              <div class="col-md-12">
+                <div class="tile row">
+                  <div class="col-md-12">
+                    <div id="calendar" style="width:100%;"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+            <div class="clearfix"></div>
+            <div class="x_content"></div>
+
+            <div class="row">
+              <div class="col-md-12">
+                <div class="tile">
+                  <div class="tile-body">
+                    <div class="table-responsive">
+                      <div id="sampleTable_wrapper" class="dataTables_wrapper container-fluid dt-bootstrap4 no-footer">
+                        <div class="row">
+                          <div class="col-sm-12">
+                            <table class="table table-hover table-bordered dataTable no-footer" id="sampleTable" role="grid"
+                              aria-describedby="sampleTable_info">
+                              <thead>
+                                <tr role="row">
+                                  <th class="sorting_asc" tabindex="0" aria-controls="sampleTable" rowspan="1" colspan="1"
+                                    aria-sort="ascending" aria-label="Name: activate to sort column descending"
+                                    style="width: 261.641px;">Nome Paciente</th>
+                                  <th class="sorting" tabindex="0" aria-controls="sampleTable" rowspan="1" colspan="1"
+                                    aria-label="Position: activate to sort column ascending" style="width: 270px;">Nome Terapeuta
+                                  </th>
+                                  <th class="sorting" tabindex="0" aria-controls="sampleTable" rowspan="1" colspan="1"
+                                    aria-label="Position: activate to sort column ascending" style="width: 100.312px;">N° Guia
+                                  </th>
+                                  <th class="sorting" tabindex="0" aria-controls="sampleTable" rowspan="1" colspan="1"
+                                    aria-label="Office: activate to sort column ascending" style="width: 189.281px;">Dia e hora
+                                    início Consulta</th>
+            
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {% for event in events %}
+                                <tr>
+                                  <td>{{ event.paciente }}</td>
+                                  <td>{{ event.terapeuta }}</td>
+                                  <td>{{ event.guia }}</td>
+                                  <td>{{ event.start_time }}</td>
+                                </tr>
+                                {% endfor %}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<!-- calendar modal -->
+<div id="CalenderModalNew" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h4 class="modal-title" id="myModalLabel">Adicionar novo agendamento</h4>
+      </div>
+      <div class="modal-body">
+        <div id="testmodal" style="padding: 5px 20px;">
+          <form method="post">
+            {% csrf_token %}
+            <div class="modal-body">
+              <div class="col-12 row">
+                <div class="form-group">
+                  <label for="recipient-name" class="col-form-label">Nome Paciente:</label>
+                  {{ form.paciente }}
+                </div>
+                <div class="form-group">
+                  <label for="message-text" class="col-form-label">Nome Terapeuta:</label>
+                  {{ form.terapeuta }}
+                </div>
+                <div class="form-group">
+                  <label for="message-text" class="col-form-label">Cidade:</label>
+                  {{ form.cidade }}
+                </div>
+                <div class="form-group">
+                  <label for="message-text" class="col-form-label">Tipo terapia:</label>
+                  {{ form.tipo_terapia }}
+                </div>
+                <div class="form-group">
+                  <label for="message-text" class="col-form-label">Número da guia:</label>
+                  {{ form.guia }}
+                </div>
+                <div class="form-group">
+                  <label for="message-text" class="col-form-label">Data Inicial Consulta:</label>
+                  {{ form.start_time }}
+                </div>
+                <div class="form-group">
+                  <label for="message-text" class="col-form-label">Observações:</label>
+                  {{ form.descricao }}
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default antoclose" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div id="CalenderModalEdit" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h4 class="modal-title" id="myModalLabel2">Editar Agendamento</h4>
+      </div>
+      <div class="modal-body">
+
+        <div id="testmodal2" style="padding: 5px 20px;">
+          <form method="">
+            {% csrf_token %}
+            <div class="modal-body">
+              <div class="form-group">
+                <label for="message-text" class="col-form-label">Nome paciente</label>
+                <p id="nome_paciente">
+              </div>
+              <div class="form-group">
+                <label for="message-text" class="col-form-label">Nome terapeuta:</label>
+                <p id="nome_terapeuta">
+              </div>
+              <div class="form-group">
+                <label for="message-text" class="col-form-label">Guia</label>
+                <p id="numero_guia">
+              </div>
+              <div class="form-group">
+                <label for="message-text" class="col-form-label">Descrição:</label>
+                <p id="description_event_detail">
+              </div>
+              <div class="form-group">
+                <label for="message-text" class="col-form-label">Início da Consulta:</label>
+                <p id="start_event_detail">
+              </div>
+              <div class="form-group">
+                <label for="message-text" class="col-form-label">Final da Consulta:</label>
+                <p id="end_event_detail">
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default antoclose2" data-dismiss="modal">Fechar</button>
+        <button type="button" class="btn btn-success" id="confirmEventBtn">Confirmar Agendamento</button>
+        <button type="button" class="btn btn-danger" id="deleteEventBtn">Deletar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="fc_create" data-toggle="modal" data-target="#CalenderModalNew"></div>
+<div id="fc_edit" data-toggle="modal" data-target="#CalenderModalEdit"></div>
+<!-- /calendar modal -->
+</div>
+
+{% endblock content %}
+
+{% block javascripts %}
+{{ block.super }}
+<!-- FullCalendar -->
+
+{% endblock javascripts %}
+
+{% block extrascripts %}
+<script type="text/javascript" src="{% static 'js/plugins/jquery.dataTables.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/plugins/dataTables.bootstrap.min.js' %}"></script>
+<script type="text/javascript">$('#sampleTable').DataTable();</script>
+
+
+<script src="{% static 'calender/main.js' %}"></script>
+<script>
+
+  let eventId = null;  // Variável global para armazenar o ID do evento
+ 
+  FullCalendar.globalLocales.push(function () {
+    'use strict';
+
+    var ptBr = {
+      code: 'pt-br',
+      week: {
+        dow: 1, // Monday is the first day of the week.
+        doy: 4 // The week that contains Jan 4th is the first week of the year.
+      },
+      buttonText: {
+        prev: 'Anterior',
+        next: 'Próximo',
+        today: 'Hoje',
+        month: 'Mês',
+        week: 'Semana',
+        day: 'Dia',
+        list: 'Agenda'
+      },
+      weekText: 'Sm',
+      allDayText: 'Dia inteiro',
+      moreLinkText: function (n) {
+        return 'mais +' + n;
+      },
+      noEventsText: 'Não há eventos para mostrar'
+    };
+
+    return ptBr;
+
+  }());
+
+
+  function converterDataParaDjangoFormat(data) {
+    const dataJS = new Date(data);
+    const ano = dataJS.getFullYear();
+    const mes = (dataJS.getMonth() + 1).toString().padStart(2, '0');
+    const dia = dataJS.getDate().toString().padStart(2, '0');
+    const hora = dataJS.getHours().toString().padStart(2, '0');
+    const minuto = dataJS.getMinutes().toString().padStart(2, '0');
+    const segundo = dataJS.getSeconds().toString().padStart(2, '0');
+    const formatoDjango = `${ano}-${mes}-${dia} ${hora}:${minuto}:${segundo}`;
+    return formatoDjango;
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    var calendarEl = document.getElementById('calendar');
+    var today = new Date();
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+      //timeZone: 'America/Sao_Paulo', // Isso fará com que o FullCalendar use o fuso horário local
+      locale: 'pt-br', // Define o idioma para português
+      headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth,timeGridWeek,timeGridDay,list'
+      },
+      initialDate: today,
+      navLinks: true, // can click day/week names to navigate views
+      selectable: true,
+      selectMirror: true,
+      select: function (arg) {
+
+        // Abrir o modal
+        $('#CalenderModalNew').modal('show');
+
+        // Desselecionar a data no calendário
+        calendar.unselect();
+      },
+      eventClick: function (arg) {
+
+        console.log('clicked')
+        // Atribua os valores do evento ao modal de edição
+        var modal = $('#CalenderModalEdit');
+        // Captura o ID do evento e armazena na variável global
+        eventId = arg.event.id;
+
+        document.getElementById('nome_paciente').textContent = arg.event.extendedProps.paciente;
+        document.getElementById('nome_terapeuta').textContent = arg.event.extendedProps.terapeuta;
+        document.getElementById('numero_guia').textContent = arg.event.extendedProps.guia;
+        document.getElementById('description_event_detail').textContent = arg.event.extendedProps.descricao;
+        document.getElementById('start_event_detail').textContent = arg.event.start.toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
+        document.getElementById('end_event_detail').textContent = arg.event.end ? arg.event.end.toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' }) : '';
+        // Mostrar o modal de edição
+                        // Armazena o ID do evento para usar ao deletar ou confirmar
+                        document.getElementById('confirmEventBtn').onclick = function() {
+                    confirmEvent(arg.event.id);
+                };
+                     // Armazena o ID do evento para usar ao deletar
+                     document.getElementById('deleteEventBtn').onclick = function() {
+                    deleteEvent(arg.event.id);
+                };
+        modal.modal('show');
+
+      },
+      editable: true,
+      dayMaxEvents: true, // allow "more" link when too many events
+      events: [
+        {% for event in events %}
+                {
+        id: '{{ event.id }}',
+        title: '{{ event.paciente }}',
+        paciente: '{{ event.paciente }}',
+        terapeuta: '{{ event.terapeuta }}',
+        guia: '{{ event.guia }}',
+        start: '{{ event.start_time }}',
+        end: '{{ event.end_time }}',
+        descricao: '{{ event.descricao }}',
+        backgroundColor: '{{ event.confirmado|yesno:"green,blue" }}',  // Verde se confirmado, azul se não
+        borderColor: '{{ event.confirmado|yesno:"green,blue" }}',  // Verde se confirmado, azul se não
+      },
+      {% endfor %}
+            ],
+    });
+  calendar.render();
+    
+       // Função para deletar o evento
+       function deleteEvent(eventId) {
+            // Remove o evento do calendário
+            var event = calendar.getEventById(eventId);
+            console.log('Captured Event ID:', eventId);
+            if (event) {
+                event.remove();
+
+                // Chamada AJAX para deletar o evento do banco de dados, se necessário
+                // Exemplo de chamada AJAX para deletar o evento no backend
+                var csrfToken = '{{ csrf_token }}'; // Substitua pelo seu token CSRF correto
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", `/delete_event/${eventId}/`, true);
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                        alert('Agendamento deletado com sucesso!');
+                        window.location.reload();
+                    } else if (xhr.readyState === XMLHttpRequest.DONE) {
+                        alert('Ocorreu um erro ao deletar o evento.');
+                        window.location.reload();
+                    }
+                };
+                xhr.send("id=" + eventId + "&csrfmiddlewaretoken=" + csrfToken);
+
+                // Fecha o modal após deletar
+                closeModal();
+            }
+        }
+
+        // Função para confirmar o evento e mudar a cor
+        function confirmEvent(eventId) {
+            var event = calendar.getEventById(eventId);
+            console.log('Captured Event ID:', eventId);
+            
+
+            event.setProp('backgroundColor', 'green'); // Muda a cor de fundo para verde
+            event.setProp('borderColor', 'green');     // Muda a cor da borda para verde
+
+            // Define a propriedade "confirmado" como true
+            event.setExtendedProp('confirmado', true);
+
+            // Chamada AJAX para atualizar o status do evento no backend, se necessário
+            var csrfToken = '{{ csrf_token }}'; // Substitua pelo seu token CSRF correto
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", `/confirm_event/${eventId}/`, true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                    alert('Evento confirmado com sucesso!');
+                    window.location.reload();
+                } else if (xhr.readyState === XMLHttpRequest.DONE) {
+                    alert('Ocorreu um erro ao confirmar o evento.');
+                    window.location.reload();
+                }
+            };
+            xhr.send("id=" + event.id + "&csrfmiddlewaretoken=" + csrfToken);
+
+            // Fecha o modal após confirmar
+            closeModal();
+        }
+
+        // Função para fechar o modal
+        function closeModal() {
+            document.getElementById('CalenderModalEdit').style.display = 'none';
+        }
+
+});
+
+
+
+
+</script>
+{% endblock extrascripts %}

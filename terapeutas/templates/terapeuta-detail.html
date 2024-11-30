@@ -1,0 +1,52 @@
+{% extends 'componentes/base_site.html' %}
+
+{% block content %}
+
+<div class="container mt-4">
+    <div class="right_col" role="main">
+        <div class="">
+            <div class="page-title">
+                <div class="title_left">
+                    <h3>Informações Terapeuta</h3>
+                </div>
+
+            </div>
+            <div class="clearfix"></div>
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div class="x_panel">
+                        <div class="x_title">
+                            <h2>Detalhe Terapeuta:</h2>
+                            <div class="clearfix"></div>
+                        </div>
+
+                        <div class="x_content">
+
+                            <div class="card">
+                                <div class="card-body">
+                                    <h3 class="card-title">Nome terapeuta: {{ object.nome_terapeuta }}</h3>
+                                    <p class="card-text">Email: {{ object.email }}</p>
+                                    <p class="card-text">Contato: {{ object.contato }}</p>
+                                    <p class="card-text">Título Profissional: {{ object.titulo_profissional }}</p>
+                                    <p class="card-text">Tipo: {{ object.tipo }}</p>
+                                    <p class="card-text">Função: {{ object.funcao }}</p>
+                                    <p class="card-text">Acordo: {{ object.acordo }}</p>
+                                    <p class="card-text">Valor: {{ object.valor}}</p>
+                                    <p class="card-text">Registro de Classe: {{ object.registro_classe }}</p>
+                                    <p class="card-text">Conselho de Classe: {{ object.conselho_classe }}</p>
+                                    <p class="card-text">Dados Bancários: {{ object.dados_bancarios}}</p>
+                                    <p class="card-text">Documentos: {{ object.documentos }}</p>
+                                    <p class="card-text">Outras informações úties: {{ object.outros }}</p>
+                                </div>
+                            </div>
+                            <a href="{% url 'terapeuta-list' %}" class="btn btn-info btn-sm">Voltar para lista
+                                terapeutas</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    {% endblock %}

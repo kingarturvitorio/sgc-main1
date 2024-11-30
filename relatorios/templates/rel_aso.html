@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang='pt-br'>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+</head>
+<style>
+    h1{ font-size: 20px; color: #000; text-align: center;}
+    h3{ font-size: 18px; text-align:center;}
+    .coluna1{ height:20px; font-size: 14px; border: 1px #333 solid; text-align:left; 
+        vertical-align:middle; padding-top: 4px; padding-left: 4px;}
+
+    .coluna2{ height:20px; font-size: 14px; border: 1px #333 solid; text-align:left; 
+        vertical-align:middle; padding-top: 4px; padding-left: 4px;}
+    
+   p{ font-size:12px; height:20px; text-align:center;}
+</style>
+<body>
+<h1>Prontuário de atendimento paciente</h1>
+<h3>{{paciente.nome}}</h3>
+    <table>
+        <tr>
+            <td class="coluna1" width="80">NOME:</td>
+            <td class="coluna2" width="400">{{ paciente.nome }}</td>
+            <td class="coluna1" width="80">CARTEIRINHA:</td>
+            <td class="coluna2" width="400">{{ paciente.carteirinha }}</td>
+        </tr>
+        <tr>
+            <td class="coluna1" width="80">Teraputa:</td>
+            <td class="coluna2">{{ paciente.nome }}</td>
+            <td class="coluna1" width="80">Tipo clinico:</td>
+            <td class="coluna2">{{ paciente.carteirinha }}</td>
+        </tr>
+    </table>
+    
+
+    <hr>
+    <p style="text-align: justify;">Atesto para os efeitos da lei 65614 de 22/12/1977, capítulo V da CLT, 
+    portaria 3214 de 08/06/1978 e portaria 8 de 08/05/1996, que o(a) acima referenciado(a), 
+    realizou as terapias, conforme discriminação abaixo:</p>
+
+    <h3>Terapias Realizadas</h3>
+    <p> Inserir as terapias realizadas </p>
+
+    <table>
+        <tr>
+            <tr>
+                <td class="coluna1" width="80">Data inico da Consulta</td>
+                <td class="coluna2">{{ terapia.start_time }}</td>
+            </tr>
+            <tr>
+                <td class="coluna1" width="80">Data fim da Consulta</td>
+                <td class="coluna2">{{ terapia.end_time }}</td>
+            </tr>
+            <tr>
+                <td class="coluna1" width="80">Tipo clinico:</td>
+                <td class="coluna2">{{ terapia.tipo_terapia }}</td>
+            </tr>
+            <tr>
+                <td class="coluna1" width="80">Guia:</td>
+                <td class="coluna2">{{ terapia.guia }}</td>
+            </tr>
+        </tr>
+    </table>
+
+
+    <hr>
+
+    <table>
+        <tr>
+            <td class="coluna1" style="border:none;">Campinas, {{ terapia.data_hora_registro|date:"d/m/Y" }}</td>
+            <td class="coluna1" style="border:none; text-align:center">___________________________________________________</td>
+        </tr>
+        <tr>
+            <td class="coluna1" style="border:none;">&nbsp</td>
+            <td class="coluna1" style="border:none; text-align:center">Terapeuta: {{ terapia.terapeuta }}</td>
+        </tr>
+    </table>
+
+    <p>&nbsp</p>
+
+    <p style="text-align: left;">Recebi do boletim, e atesto os exames realizados no prontuário</p>
+    <p style="text-align: left;">_________________________________________________________, ____/____/________</p>
+</body>
+</html>

@@ -1,0 +1,4 @@
+/* static/css/styles.css */
+.bg-image {
+    background-image: url('../images/lumini.png'); /* Caminho relativo para a imagem */
+}
