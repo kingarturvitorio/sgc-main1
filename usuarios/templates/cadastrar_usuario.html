@@ -1,0 +1,63 @@
+{% extends 'componentes/base_site.html' %}
+
+{% block title %}
+SGC - Pacientes
+{% endblock %}
+
+
+{% block content %}
+<div class="right_col" role="main">
+    <div class="">
+        <div class="page-title">
+            <div class="title_left">
+                <h3>Criar novo usuário do sistema</h3>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                    
+                    <form action="#" method="post" class="signup-form">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="username" for="username">Nome</label>
+                                    {{form.username.errors}}
+                                    {{form.username}}
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="username" for="">Email</label>
+                                    {{form.email.errors}}
+                                    {{form.email}}
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="username" for="">Senha</label>
+                                    {{form.password1.errors}}
+                                    {{form.password1}}
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="username" for="">Confirmar Senha</label>
+                                    {{form.password2.errors}}
+                                    {{form.password2}}
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-primary">Criar nova conta</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+        </div>
+    </div>
+
+    
+    {% endblock %}

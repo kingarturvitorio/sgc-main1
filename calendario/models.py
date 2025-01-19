@@ -1,6 +1,7 @@
 from django.db import models
 from pacientes.models import Paciente
 from terapeutas.models import Terapeuta
+from convenios.models import Convenio
 # Create your models here.
 from datetime import datetime
 from usuarios.models import User
@@ -45,18 +46,22 @@ class Event(models.Model):
         ("PARTICULAR","Particular"),
     ]
 
-    paciente = models.ForeignKey(Paciente, on_delete=models.PROTECT, related_name='paciente')
-    terapeuta = models.ForeignKey(Terapeuta, on_delete=models.PROTECT, related_name='terapeuta')
-    cidade = models.CharField(max_length=12)
+    paciente = models.CharField(max_length=100)  # Agora é texto, não uma ForeignKey
+    terapeuta = models.CharField(max_length=100)  # Agora é texto, não uma ForeignKey
+    convenio = models.CharField(max_length=100)  # Agora é texto, não uma ForeignKey
+    cidade = models.CharField(max_length=30, blank=True, null=True)
     tipo_terapia = models.CharField(max_length=12, choices=TIPOS_TERAPIA, default='')
-    guia = models.CharField(max_length=20)
+    guia = models.CharField(max_length=20, blank=True, null=True)
     start_time = models.DateTimeField()
     end_time = models.DateTimeField(blank=True, null=True)
-    descricao = models.TextField(null=False, blank=False)
+    descricao = models.TextField(blank=True, null=True)
     confirmado = models.BooleanField(default=False)
 
     # Campo de métrica para contar eventos
     metric_count = models.IntegerField(default=0, editable=False)
+
+    confirmed_color = models.CharField(max_length=20, default='')  # New field for confirmed color
+
 
     objects = EventManager()
 
@@ -65,14 +70,36 @@ class Event(models.Model):
     
     ##ajusta a condição de tempo para salvar o final trinta minutos depois do inicio da consulta
     def save(self, *args, **kwargs):
-
-        # Incrementa a métrica toda vez que um evento é criado
+  
+          # Incrementa a métrica toda vez que um evento é criado
         if not self.pk:  # Se o evento é novo (não tem chave primária ainda)
             self.metric_count = 1
+            
+        # Padroniza o nome do terapeuta
+        if self.terapeuta:
+            self.terapeuta = self.terapeuta.strip()
 
+        # Ajusta o horário de término
         if self.start_time and not self.end_time:
             self.end_time = self.start_time + timedelta(minutes=30)
 
+        # Criar ou atualizar Paciente
+        paciente, _ = Paciente.objects.update_or_create(
+            nome=self.paciente.strip(),
+            defaults={'nome': self.paciente.strip()}  # Ajuste outros campos, se necessário
+        )
+
+        # Criar ou atualizar Terapeuta
+        terapeuta, _ = Terapeuta.objects.update_or_create(
+            nome_terapeuta=self.terapeuta,
+            defaults={'nome_terapeuta': self.terapeuta}  # Ajuste outros campos, se necessário
+        )
+
+        # Criar ou atualizar Convenio
+        convenio, _ = Convenio.objects.update_or_create(
+            nome_convenio=self.convenio,
+            defaults={'nome_convenio': self.convenio}  # Ajuste outros campos, se necessário
+        )
 
         super(Event, self).save(*args, **kwargs)
 

@@ -2,12 +2,14 @@ from django.urls import path
 
 from usuarios import views
 
-app_name = "usuarios"
+from . import views
 
 urlpatterns = [
 
-    path('signin/', views.SignInView.as_view(), name='signin'),
-    path('signup/', views.SignUpView.as_view(), name='signup'),
-    path('signout/', views.signout, name='signout'),
-    # path('new_car/', NewCarCreateView.as_view(), name='new_car'),
+    path('login/', views.login_user, name='login'),
+    path('register/', views.register_user, name='register'),
+    path('perfil/', views.profile, name='perfil'),
+    path('editar_perfil/', views.editar_perfil, name='editar_perfil'),
+    path('alterar_senha/', views.alterar_senha, name='alterar_senha'),
+    path('logout/', views.signout, name='logout'),
 ]

@@ -4,6 +4,7 @@ from django.db.models.query import QuerySet
 from django.shortcuts import render
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 from . import models, forms
+from django.http import JsonResponse
 # Create your views here.
 
 class PacienteListView(ListView):
@@ -40,3 +41,9 @@ class PacienteDeleteView(DeleteView):
     model = models.Paciente
     template_name = 'paciente-delete.html'
     success_url = reverse_lazy('paciente-list')
+
+def buscar_pacientes(request):
+    query = request.GET.get('q', '')
+    pacientes = models.Paciente.objects.filter(nome__icontains=query)  # Busca por nome (case insensitive)
+    resultados = [{'id': paciente.id, 'nome': paciente.nome} for paciente in pacientes]
+    return JsonResponse(resultados, safe=False)

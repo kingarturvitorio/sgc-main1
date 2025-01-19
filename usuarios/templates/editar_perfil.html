@@ -1,0 +1,63 @@
+{% extends 'componentes/base_site.html' %}
+
+{% block title %}
+SGC - Pacientes
+{% endblock %}
+
+{% block content %}
+<div class="right_col" role="main">
+    <div class="">
+        <div class="page-title">
+            <div class="title_left">
+                <h3>Editar Perfil</h3>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                    <main class="main-container">
+                        <form class = 'container' action="" method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="user-profile">
+                                <p class="profile-page-heading">Editar seu perfil</p>
+                                <img src="{{user.profile.profile_img.url}}" alt="user-image" width="" srcset="">
+                                {{form.profile_img}}
+                            </div>
+                        
+            
+                            <div class="user-content-container user-profile-form-container">
+                                <ul>
+                                    <li class="name">
+                                        <label for="user-name">Seu nome</label>
+                                        {{form.name}}
+                                    </li>
+                                    <li class="title">
+                                        <label for="user-title">Profissão</label>
+                                        {{form.title}}
+                                    </li>
+                                    <li class="desc">
+                                        <label for="user-desc">Descrição</label>
+                                        {{form.desc}}
+                                    </li>
+                                </ul>
+                                <button class="profile-save-button"> Salvar </button>
+                            </div>
+                        </form>
+                </main>
+            
+                <script>
+            
+                var id_name = document.getElementById('id_name')
+                var id_title = document.getElementById('id_title')
+                var id_desc = document.getElementById('id_desc')
+                id_name.placeholder = 'Your Name'
+                id_title.placeholder = 'Your Title'
+                id_desc.placeholder = 'Description'
+            
+                </script>
+        </div>
+    </div>
+
+    
+    {% endblock %}

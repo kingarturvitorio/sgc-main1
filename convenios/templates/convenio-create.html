@@ -1,0 +1,48 @@
+{% extends 'componentes/base_site.html' %}
+
+{% block content %}
+
+{% load crispy_forms_tags %}
+
+<div class="right_col" role="main">
+    <div class="">
+        <div class="page-title">
+            <div class="title_left">
+                <h3>Informações Convenio</h3>
+            </div>
+
+        </div>
+        <div class="clearfix"></div>
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                    <div class="x_title">
+                        <h2>Cadastrar Convenio:</h2>
+                        <div class="clearfix"></div>
+                    </div>
+
+                    <div class="x_content">
+
+                        <div class="card">
+                            <div class="card-body">
+                                <form method="post" class="form">
+                                    {% csrf_token %}
+                                    {{ form|crispy }}
+                                    <button type="submit" class="btn btn-primary">Salvar Convenio</button>
+                                </form>
+                            </div>
+                        </div>
+                        <a href="{% url 'convenio-list' %}" class="btn btn-info btn-sm">Cancelar e voltar para
+                            Lista</a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+{% endblock %}

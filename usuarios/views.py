@@ -2,56 +2,75 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from django.views.generic import View
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
 
-from usuarios.forms import SignUpForm
-from usuarios.forms import SignInForm
+from .forms import CreateUserForm, ProfileForm
 
-class SignInView(View):
-    """ User registration view """
+def profile(request):
+    return render(request, 'perfil.html')
 
-    template_name = "login.html"
-    form_class = SignInForm
+def editar_perfil(request):
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, request.FILES, instance=request.user.profile)
+        if form.is_valid():
+            form.save()
+            return redirect('perfil')
+    else:
+        form = ProfileForm(instance=request.user.profile)
+    context = {'form':form}
+    return render(request, 'editar_perfil.html', context)
 
-    def get(self, request, *args, **kwargs):
-        forms = self.form_class()
-        context = {"form": forms}
-        return render(request, self.template_name, context)
+def login_user(request):
+    
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        print(f'Estou acessando o sistema')
+        
+        user = authenticate(request, username=username, password=password)
 
-    def post(self, request, *args, **kwargs):
-        forms = self.form_class(request.POST)
-        if forms.is_valid():
-            email = forms.cleaned_data["email"]
-            password = forms.cleaned_data["password"]
-            user = authenticate(email=email, password=password)
-            if user:
-                login(request, user)
-                return redirect("calendario:calendar")
-        context = {"form": forms}
-        return render(request, self.template_name, context)
-
+        if user is not None:
+            login(request, user)
+            return redirect("calendario:calendar")
+        else:
+            return redirect('login')
+    return render(request, 'login.html')
 
 
+def alterar_senha(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(user=request.user, data=request.POST)
+        if form.is_valid():
+            user = form.save()
+            # Atualiza a sessão para evitar logout após alteração da senha
+            update_session_auth_hash(request, user)
+            #messages.success(request, 'Sua senha foi alterada com sucesso!')
+            return redirect('perfil')  # Redireciona para a página de perfil, por exemplo
+        #else:
+            #messages.error(request, 'Corrija os erros abaixo.')
+    else:
+        form = PasswordChangeForm(user=request.user)
 
-class SignUpView(View):
-    """ User registration view """
+    context = {'form': form}
+    return render(request, 'alterar_senha.html', context)
 
-    template_name = "cadastrar.html"
-    form_class = SignUpForm
+def register_user(request):
+    form = CreateUserForm()
 
-    def get(self, request, *args, **kwargs):
-        forms = self.form_class()
-        context = {"form": forms}
-        return render(request, self.template_name, context)
+    if request.method == 'POST':
+        form = CreateUserForm(request.POST)
+        if form.is_valid():
+            form.save()
 
-    def post(self, request, *args, **kwargs):
-        forms = self.form_class(request.POST)
-        if forms.is_valid():
-            forms.save()
-            return redirect("usuarios:signin")
-        context = {"form": forms}
-        return render(request, self.template_name, context)
+            return redirect('register')
+        else:
+            context = {'form': form}
+            return render(request, 'cadastrar_usuario.html', context)
 
+    context = {'form': form}
+    return render(request, 'cadastrar_usuario.html', context)
 
 def signout(request):
     logout(request)
-    return redirect("usuarios:signin")
+    return redirect('login')

@@ -30,6 +30,7 @@ urlpatterns = [
     path('', include('relatorios.urls')),
     path('', include('calendario.urls')),
     path('', include('sitelumini.urls')),
+    path('', include('convenios.urls')),
 ]
 
 if settings.DEBUG:

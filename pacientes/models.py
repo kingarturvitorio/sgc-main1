@@ -9,7 +9,7 @@ class Paciente(models.Model):
     telefone_responsavel = models.CharField(max_length=100, blank=True, null=True)
     telefone_contato = models.CharField(max_length=100, blank=True, null=True)
     telefone_emergencia = models.CharField(max_length=100, blank=True, null=True)
-    tipo_convenio = models.CharField(max_length=100)
+    tipo_convenio = models.CharField(max_length=100, blank=True, null=True)
     data_nascimento = models.DateField(blank=True, null=True)
     nome_responsavel = models.CharField(max_length=100, blank=True, null=True)
     documento_responsavel = models.CharField(max_length=100, blank=True, null=True)
