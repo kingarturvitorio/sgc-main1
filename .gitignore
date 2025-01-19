@@ -1,6 +1,4 @@
 venv
 */_pycache_
-db.sqllite3
 runServer.bat
-*/migrations
 */.lock
