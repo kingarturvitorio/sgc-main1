@@ -44,152 +44,166 @@ function formatDate(date) {
     });
 }
 
-
 document.addEventListener('DOMContentLoaded', function () {
-    const calendarEl = document.getElementById('calendar');
-<<<<<<< HEAD
-    
-=======
->>>>>>> 8051eacca80926afeee9b02002f8811a1de471c7
-    const calendar = new FullCalendar.Calendar(calendarEl, {
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
         locale: 'pt-br',
         headerToolbar: {
             left: 'prev,next today',
             center: 'title',
             right: 'dayGridMonth,timeGridWeek,timeGridDay,list'
         },
-        events: fetchEvents,
-        selectable: true,
-        select: () => $('#CalenderModalNew').modal('show'),
-        eventClick: handleEventClick,
-        eventDidMount: customizeEventAppearance
-    });
-
-    calendar.render();
-<<<<<<< HEAD
-        // Buscar terapeutas ao carregar a página
-    console.log("Iniciando requisição para obter terapeutas...");
-    $.ajax({
-        type: 'GET',
-        url: '/get_terapeutas/',  // Certifique-se de que essa URL está correta
-        success: function(data) {
-            console.log("Terapeutas recebidos:", data);  // Depuração
-
-            let select = document.getElementById('terapeutaFilter');
-            if (!select) {
-                console.error("Elemento #terapeutaFilter não encontrado!");
-                return;
-            }
-
-            select.innerHTML = '<option value="">Selecione um Terapeuta</option>'; // Resetando opções
-
-            data.forEach(terapeuta => {
-                let option = document.createElement('option');
-                option.value = terapeuta.nome_terapeuta;
-                option.textContent = terapeuta.nome_terapeuta;
-                select.appendChild(option);
+        // Carregando eventos via AJAX
+        events: function (fetchInfo, successCallback, failureCallback) {
+            $.ajax({
+                url: '/get/event/', // URL da view que retorna os eventos em JSON
+                method: 'GET',
+                success: function (data) {
+                    successCallback(data); // Passa os eventos recebidos ao calendário
+                },
+                error: function (xhr, status, error) {
+                    console.error('Erro ao carregar eventos: ', error);
+                    failureCallback(error);
+                }
             });
         },
-        error: function(xhr, status, error) {
-            console.error('Erro ao buscar terapeutas:', error);
-        }
-    });    
-    
-    // Event form submission
-    $('#newEventForm').on('submit', handleNewEventSubmission);
-    
-=======
+        selectable: true,
+        select: function (info) {
+            $('#CalenderModalNew').modal('show');
+        },
+        eventClick: function (info) {
+            $('#nome_paciente').text(info.event.extendedProps.paciente);
+            $('#nome_terapeuta').text(info.event.extendedProps.terapeuta);
+            $('#nome_convenio').text(info.event.extendedProps.convenio);
+            $('#numero_guia').text(info.event.extendedProps.guia);
 
-    // Event form submission
-    $('#newEventForm').on('submit', handleNewEventSubmission);
->>>>>>> 8051eacca80926afeee9b02002f8811a1de471c7
+            const startDate = formatDate(info.event.start);
+            const endDate = formatDate(info.event.end);
 
-        // Show All Events Button
-    document.getElementById('showAllEventsButton').addEventListener('click', function() {
-        calendar.removeAllEvents();  // Clear existing events
-        calendar.refetchEvents(); // This will fetch all events again
-    });
+            $('#start_event_detail').text(startDate);
+            $('#end_event_detail').text(endDate);
+            $('#CalenderModalEdit').modal('show');
 
-    async function fetchEvents(fetchInfo, successCallback, failureCallback) {
-        try {
-            const response = await $.ajax({
-                url: '/get/event/',
-<<<<<<< HEAD
-                method: 'GET',
-                data: {
-                    start_date: fetchInfo.startStr, // Passando o intervalo de datas
-                    end_date: fetchInfo.endStr
-                }
-=======
-                method: 'GET'
->>>>>>> 8051eacca80926afeee9b02002f8811a1de471c7
+            // Atualiza o paciente ID no botão de deletar todos os eventos
+            var pacienteId = info.event.extendedProps.paciente_id;  // Pega o paciente ID do evento
+            console.log("Paciente ID: ", pacienteId);  // Verifica o valor do ID no console
+            
+            $('#deleteAllEventsBtn').data('paciente-id', pacienteId);  // Atualiza o paciente_id
+
+            $('#confirmEventBtn').off().click(function () {
+                confirmEvent(info.event.id);
             });
-            successCallback(response);
-        } catch (error) {
-            console.error('Erro ao carregar eventos: ', error);
-            failureCallback(error);
+
+            $('#deleteEventBtn').off().click(function () {
+                deleteEvent(info.event.id);
+            });
+
+            $('#deleteAllEventsBtn').off().click(function () {
+                var pacienteId = $(this).data('paciente-id');  // Pega o pacienteId atualizado
+                console.log("ID do Paciente no clique: ", pacienteId);  // Verifica o valor do ID no clique
+                deleteAllEvents(pacienteId);
+            });
+        },
+
+        eventDidMount: function(info) {
+            // Adiciona uma lógica extra para personalizar as cores, se necessário
+            if (info.event.extendedProps.terapeuta) {
+                info.el.style.backgroundColor = info.event.backgroundColor; // Aplica a cor dinâmica
+                info.el.style.color = 'white'; // Ajusta o texto para ficar legível
+            }
         }
-    }
+    });
+    calendar.render();
 
-    function handleEventClick(info) {
-        const { extendedProps } = info.event;
-        $('#nome_paciente').text(extendedProps.paciente);
-        $('#nome_terapeuta').text(extendedProps.terapeuta);
-        $('#nome_convenio').text(extendedProps.convenio);
-        $('#numero_guia').text(extendedProps.guia);
-        $('#start_event_detail').text(formatDate(info.event.start));
-        $('#end_event_detail').text(formatDate(info.event.end));
-        $('#CalenderModalEdit').modal('show');
-
-        const pacienteId = extendedProps.paciente_id;
-        $('#deleteAllEventsBtn').data('paciente-id', pacienteId);
-
-        $('#confirmEventBtn').off().click(() => confirmEvent(info.event.id));
-        $('#deleteEventBtn').off().click(() => deleteEvent(info.event.id));
-        $('#deleteAllEventsBtn').off().click(() => deleteAllEvents(pacienteId));
-    }
-
-    function customizeEventAppearance(info) {
-        if (info.event.extendedProps.terapeuta) {
-            info.el.style.backgroundColor = info.event.backgroundColor;
-            info.el.style.color = 'white';
-        }
-    }
-
-    async function handleNewEventSubmission(e) {
-        e.preventDefault();
-        const formData = $(this).serialize();
-
-        try {
-            const response = await $.ajax({
+        // Função para adicionar novo evento via AJAX
+        $('#newEventForm').on('submit', function (e) {
+            e.preventDefault();
+            var formData = $(this).serialize();
+    
+            $.ajax({
                 type: 'POST',
                 url: `/event/new/`,
-                data: formData
+                data: formData,
+                success: function (response) {
+                    // Adiciona o evento original ao calendário
+                    var originalEvent = {
+                        id: response.id,  // Ajuste conforme a estrutura da resposta
+                        title: response.title,
+                        start: response.start,
+                        end: response.end,
+                        backgroundColor: response.backgroundColor,
+                        borderColor: response.borderColor,
+                        extendedProps: {
+                            paciente: response.paciente,
+                            terapeuta: response.terapeuta,
+                            convenio: response.convenio,
+                            guia: response.guia,
+                            descricao: response.descricao
+                        }
+                    };
+                    calendar.addEvent(originalEvent);
+    
+                    // Adiciona os eventos replicados ao calendário (verifica se existe o campo replicated_events)
+                    if (Array.isArray(response.replicated_events)) {
+                        response.replicated_events.forEach(function (replicatedEvent) {
+                            var newReplicatedEvent = {
+                                id: replicatedEvent.id,
+                                title: replicatedEvent.title,
+                                start: replicatedEvent.start,
+                                end: replicatedEvent.end,
+                                backgroundColor: replicatedEvent.backgroundColor,
+                                borderColor: replicatedEvent.borderColor
+                            };
+                            calendar.addEvent(newReplicatedEvent);
+                        });
+                    }
+                    
+                    // Força o calendário a renderizar novamente
+                    // Após adicionar os eventos replicados
+                    calendar.refetchEvents();  // Refetch eventos do backend ou renderiza todos os eventos adicionados
+    
+                    // Adicionar o evento original à tabela dinamicamente
+                    addEventToTable(originalEvent);
+    
+                    // Fecha o modal e reseta o formulário
+                    $('#CalenderModalNew').modal('hide'); // Certifique-se que o ID está correto
+                    $('#newEventForm')[0].reset(); // Reseta o formulário
+                },
+                error: function (xhr, status, error) {
+                    console.error('Erro ao criar evento: ', error);
+                }
             });
-        // Refetch events to get the latest data from the server
-        calendar.refetchEvents();
-        $('#CalenderModalNew').modal('hide');
-        $('#newEventForm')[0].reset();
-        } catch (error) {
-        console.error('Erro ao criar evento: ', error);
-        }
-        }
-
+        });
 
     
-    // Function to confirm event via AJAX
+    // Função para adicionar uma linha na tabela
+    function addEventToTable(event) {
+        var startDate = new Date(event.start);
+        var formattedDate = startDate.toLocaleString('pt-BR', { dateStyle: 'full', timeStyle: 'short' });
+
+        // Criando nova linha e atribuindo o id da linha correspondente ao evento
+        var newRow = `<tr id="eventRow-${event.id}">
+                            <td>${event.extendedProps.paciente}</td>
+                            <td>${event.extendedProps.terapeuta}</td>
+                            <td>${event.extendedProps.guia}</td>
+                            <td>${formattedDate}</td>
+                        </tr>`;
+
+        // Adicionando a nova linha na tabela
+        $('#eventTableBody').append(newRow);
+    }
+
+    // Função para confirmar evento via AJAX
     function confirmEvent(eventId) {
         $.ajax({
             type: 'POST',
             url: `/confirm_event/${eventId}/`,
             data: { 'csrfmiddlewaretoken': csrfToken },
-            success: function (response) {
-                calendar.refetchEvents();
+            success: function () {
+                var event = calendar.getEventById(eventId);
+                event.setProp('backgroundColor', 'green');
+                event.setProp('borderColor', 'green');
                 $('#CalenderModalEdit').modal('hide');
-                $('#newEventForm')[0].reset();
-            },
-            error: function (xhr, status, error) {
-                console.error('Error confirming event: ', error);
             }
         });
     }
@@ -245,67 +259,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-     // Filter button functionality
-     document.getElementById('filterButton').addEventListener('click', function() {
-<<<<<<< HEAD
-        const terapeutaNome = document.getElementById('terapeutaFilter').value; // Nome do terapeuta selecionado
-    
-        // Obtendo a visualização atual do calendário
-        var currentView = calendar.view.type;
-        var startDate = calendar.view.currentStart; // Data de início da visualização
-        var endDate = calendar.view.currentEnd; // Data de fim da visualização
-    
-        console.log('Visualização Atual:', currentView);
-        console.log('Intervalo:', startDate, 'até', endDate);
-    
-        $.ajax({
-            type: 'GET',
-            url: '/filter_events/', // URL no Django
-            data: {
-                'terapeuta_nome': terapeutaNome,
-                'start_date': startDate.toISOString(),  // Converte para string ISO (YYYY-MM-DD)
-                'end_date': endDate.toISOString(),
-                'view_type': currentView // Passa o tipo de visualização
-            },
-            success: function(data) {
-                console.log('Eventos Filtrados:', data);
-                calendar.removeAllEvents();
-                data.forEach(eventData => {
-                    calendar.addEvent(eventData);
-                });
-            },
-            error: function(xhr, status, error) {
-                console.error('Erro ao buscar eventos:', error);
-            }
-        });
-    });
-    
-
-    
-=======
-        const terapeutaNome = document.getElementById('terapeutaFilter').value;  // Get the selected therapist name
-        console.log('Selected Therapist:', terapeutaNome);  // Debugging line
-        
-        $.ajax({
-            type: 'GET',
-            url: '/filter_events/',  // Ensure this matches your Django URL
-            data: { 'terapeuta_nome': terapeutaNome },
-            success: function(data) {
-                console.log('Fetched Events:', data);  // Debugging line
-                calendar.removeAllEvents();  // Clear existing events
-
-                data.forEach(eventData => {
-                    calendar.addEvent(eventData);  // Add the filtered events to the calendar
-                });
-            },
-            error: function(xhr, status, error) {
-                console.error('Error fetching filtered events: ', error);
-            }
-        });
-    });
-
->>>>>>> 8051eacca80926afeee9b02002f8811a1de471c7
-    //funções de busca de paciente e terapeuta
     $(document).ready(function () {
         $("#paciente").on("input", function () {
             var query = $(this).val();  // Obter o valor digitado no campo paciente
@@ -387,6 +340,7 @@ document.addEventListener('DOMContentLoaded', function () {
             $("#terapeuta-suggestions").hide();  // Oculta a lista de sugestões
         });
     });
-});
 
+
+});
 

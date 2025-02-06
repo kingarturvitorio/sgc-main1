@@ -17,6 +17,12 @@ from calendario.utils import Calendar
 from datetime import timedelta, datetime, date
 import pytz
 
+<<<<<<< HEAD
+from django.utils.dateparse import parse_datetime
+
+
+=======
+>>>>>>> 8051eacca80926afeee9b02002f8811a1de471c7
 import logging
 
 logger = logging.getLogger(__name__)
@@ -113,11 +119,25 @@ def create_event(request):
         start_time = form.cleaned_data["start_time"]
         descricao = form.cleaned_data["descricao"]
         replicar = request.POST.get('replicar') == 'on'  # Captura o estado do checkbox
+<<<<<<< HEAD
+        periodo = request.POST.get('tempo')  # Captura o campo 'tempo' (checkbox)
+=======
+>>>>>>> 8051eacca80926afeee9b02002f8811a1de471c7
 
         # Calcula automaticamente o `end_time` (30 minutos após o `start_time`)
         if not start_time:
             return JsonResponse({'error': 'Data inicial inválida'}, status=400)
+<<<<<<< HEAD
+        
+
+        # Define o tempo de duração baseado no checkbox
+        if periodo == "1h":  
+            end_time = start_time + timedelta(hours=1)
+        else:  
+            end_time = start_time + timedelta(minutes=30)  # Padrão
+=======
         end_time = start_time + timedelta(minutes=30)
+>>>>>>> 8051eacca80926afeee9b02002f8811a1de471c7
 
         # Busca a cor do terapeuta
         try:
@@ -148,7 +168,11 @@ def create_event(request):
         if replicar:
             for semana in range(1, 53):  # Próximas 52 semanas (12 meses)
                 novo_start_time = start_time + timedelta(weeks=semana)
+<<<<<<< HEAD
+                novo_end_time = novo_start_time + timedelta(hours=1 if periodo == "1h" else 30)
+=======
                 novo_end_time = novo_start_time + timedelta(minutes=30)
+>>>>>>> 8051eacca80926afeee9b02002f8811a1de471c7
                 models.Event.objects.create(
                     paciente=paciente,
                     terapeuta=terapeuta,
@@ -251,12 +275,158 @@ def next_day(request, event_id):
     
 
 def get_events(request):
-    events = models.Event.objects.all()
+    # Obtendo as datas da requisição GET
+    start_date_str = request.GET.get('start_date')
+    end_date_str = request.GET.get('end_date')
+
+    if not start_date_str or not end_date_str:
+        return JsonResponse({"error": "Parâmetros start_date e end_date são obrigatórios"}, status=400)
+
+    try:
+        start_date = parse_datetime(start_date_str)
+        end_date = parse_datetime(end_date_str)
+        if not start_date or not end_date:
+            raise ValueError("Datas inválidas")
+    except ValueError:
+        return JsonResponse({"error": "Formato de data inválido"}, status=400)
+
+    # Filtra eventos dentro do intervalo de datas
+    events = models.Event.objects.filter(start_time__gte=start_date, end_time__lte=end_date)
+
     events_list = []
+    events_dict = {}  # Usaremos um dicionário para garantir unicidade
 
     events_dict = {}  # Usaremos um dicionário para garantir unicidade
 
     for event in events:
+<<<<<<< HEAD
+        terapeuta_nome = event.terapeuta
+        terapeuta_cor = None
+
+        try:
+            terapeuta = Terapeuta.objects.get(nome_terapeuta=terapeuta_nome)
+            terapeuta_cor = terapeuta.cor
+        except Terapeuta.DoesNotExist:
+            terapeuta_cor = 'blue'
+
+        paciente_nome = event.paciente
+        paciente_id = None
+
+        try:
+            paciente = Paciente.objects.get(nome=paciente_nome)
+            paciente_id = paciente.id
+        except Paciente.DoesNotExist:
+            paciente_id = None
+
+        background_color = event.confirmed_color if event.confirmado else terapeuta_cor
+
+        if event.id not in events_dict:
+            events_dict[event.id] = {
+                'id': event.id,
+                'title': paciente_nome,
+                'start': event.start_time.isoformat(),
+                'end': event.end_time.isoformat(),
+                'backgroundColor': background_color,
+                'extendedProps': {
+                    'paciente': paciente_nome,
+                    'paciente_id': paciente_id,
+                    'terapeuta': str(event.terapeuta),
+                    'convenio': event.convenio,
+                    'guia': event.guia,
+                    'descricao': event.descricao
+                }
+            }
+
+    events_list = list(events_dict.values())
+    
+    print(f"Eventos retornados: {len(events_list)}")  # Debug
+
+    return JsonResponse(events_list, safe=False)
+
+
+from django.http import JsonResponse
+from datetime import datetime
+from .models import Event, Terapeuta, Paciente  # Certifique-se de importar os modelos corretos
+
+def filter_events(request):
+    if request.method == 'GET':
+        terapeuta_nome = request.GET.get('terapeuta_nome')  # Nome do terapeuta
+        start_date = request.GET.get('start_date')  # Data inicial (recebida do calendário)
+        end_date = request.GET.get('end_date')  # Data final (recebida do calendário)
+
+        # ✅ Validação das datas recebidas
+        if not start_date or not end_date:
+            return JsonResponse({'error': 'As datas de início e fim são obrigatórias'}, status=400)
+
+        try:
+            start_date = datetime.fromisoformat(start_date[:10])  # Converter para formato de data
+            end_date = datetime.fromisoformat(end_date[:10])  
+
+            # ✅ Filtrar eventos pelo intervalo de tempo correto (Mês, Semana, Dia, Agenda)
+            eventos = Event.objects.filter(start_time__range=[start_date, end_date])
+
+            # ✅ Filtrar pelo nome do terapeuta, caso informado
+            if terapeuta_nome:
+                eventos = eventos.filter(terapeuta__icontains=terapeuta_nome)  # 🔹 Correção aqui!
+
+            # Criar dicionário para armazenar os eventos sem duplicatas
+            eventos_dict = {}
+
+            for evento in eventos:
+                # Buscar cor do terapeuta
+                try:
+                    terapeuta = Terapeuta.objects.get(nome_terapeuta=evento.terapeuta)
+                    terapeuta_cor = terapeuta.cor
+                except Terapeuta.DoesNotExist:
+                    terapeuta_cor = 'blue'  # Cor padrão se não encontrado
+
+                # Buscar paciente
+                paciente_nome = evento.paciente  # Campo paciente (provavelmente um nome)
+                paciente_id = None
+
+                try:
+                    paciente = Paciente.objects.get(nome=paciente_nome)
+                    paciente_id = paciente.id
+                except Paciente.DoesNotExist:
+                    paciente_id = None
+
+                # Determinar a cor do evento
+                background_color = evento.confirmed_color if evento.confirmado else terapeuta_cor
+
+                # Adicionar evento ao dicionário (para evitar duplicatas)
+                if evento.id not in eventos_dict:
+                    eventos_dict[evento.id] = {
+                        'id': evento.id,
+                        'title': paciente_nome,  # Nome do paciente no título
+                        'start': evento.start_time.isoformat(),
+                        'end': evento.end_time.isoformat(),
+                        'backgroundColor': background_color,
+                        'extendedProps': {
+                            'paciente': paciente_nome,
+                            'paciente_id': paciente_id,
+                            'terapeuta': str(evento.terapeuta),
+                            'convenio': evento.convenio,
+                            'guia': evento.guia,
+                            'descricao': evento.descricao
+                        }
+                    }
+
+            # ✅ Retornar lista de eventos filtrados
+            eventos_list = list(eventos_dict.values())
+            print(f"Filtered Events Returned: {len(eventos_list)}")
+            
+            return JsonResponse(eventos_list, safe=False)
+
+        except ValueError:
+            return JsonResponse({'error': 'Datas inválidas'}, status=400)
+
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+
+def get_terapeutas(request):
+    terapeutas = Terapeuta.objects.all().values('id', 'nome_terapeuta')  # Ajuste conforme seu modelo
+    return JsonResponse(list(terapeutas), safe=False)
+=======
     
         # Busca o terapeuta relacionado com base em algum atributo no evento
         terapeuta_nome = event.terapeuta  # Ajuste conforme seu modelo
@@ -367,3 +537,4 @@ def filter_events(request):
 
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
+>>>>>>> 8051eacca80926afeee9b02002f8811a1de471c7

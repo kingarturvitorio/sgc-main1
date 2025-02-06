@@ -44,13 +44,8 @@ function formatDate(date) {
     });
 }
 
-
 document.addEventListener('DOMContentLoaded', function () {
     const calendarEl = document.getElementById('calendar');
-<<<<<<< HEAD
-    
-=======
->>>>>>> 8051eacca80926afeee9b02002f8811a1de471c7
     const calendar = new FullCalendar.Calendar(calendarEl, {
         locale: 'pt-br',
         headerToolbar: {
@@ -66,7 +61,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     calendar.render();
-<<<<<<< HEAD
         // Buscar terapeutas ao carregar a página
     console.log("Iniciando requisição para obter terapeutas...");
     $.ajax({
@@ -98,11 +92,6 @@ document.addEventListener('DOMContentLoaded', function () {
     // Event form submission
     $('#newEventForm').on('submit', handleNewEventSubmission);
     
-=======
-
-    // Event form submission
-    $('#newEventForm').on('submit', handleNewEventSubmission);
->>>>>>> 8051eacca80926afeee9b02002f8811a1de471c7
 
         // Show All Events Button
     document.getElementById('showAllEventsButton').addEventListener('click', function() {
@@ -112,17 +101,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     async function fetchEvents(fetchInfo, successCallback, failureCallback) {
         try {
+            
             const response = await $.ajax({
                 url: '/get/event/',
-<<<<<<< HEAD
-                method: 'GET',
-                data: {
-                    start_date: fetchInfo.startStr, // Passando o intervalo de datas
-                    end_date: fetchInfo.endStr
-                }
-=======
                 method: 'GET'
->>>>>>> 8051eacca80926afeee9b02002f8811a1de471c7
             });
             successCallback(response);
         } catch (error) {
@@ -247,42 +229,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
      // Filter button functionality
      document.getElementById('filterButton').addEventListener('click', function() {
-<<<<<<< HEAD
-        const terapeutaNome = document.getElementById('terapeutaFilter').value; // Nome do terapeuta selecionado
-    
-        // Obtendo a visualização atual do calendário
-        var currentView = calendar.view.type;
-        var startDate = calendar.view.currentStart; // Data de início da visualização
-        var endDate = calendar.view.currentEnd; // Data de fim da visualização
-    
-        console.log('Visualização Atual:', currentView);
-        console.log('Intervalo:', startDate, 'até', endDate);
-    
-        $.ajax({
-            type: 'GET',
-            url: '/filter_events/', // URL no Django
-            data: {
-                'terapeuta_nome': terapeutaNome,
-                'start_date': startDate.toISOString(),  // Converte para string ISO (YYYY-MM-DD)
-                'end_date': endDate.toISOString(),
-                'view_type': currentView // Passa o tipo de visualização
-            },
-            success: function(data) {
-                console.log('Eventos Filtrados:', data);
-                calendar.removeAllEvents();
-                data.forEach(eventData => {
-                    calendar.addEvent(eventData);
-                });
-            },
-            error: function(xhr, status, error) {
-                console.error('Erro ao buscar eventos:', error);
-            }
-        });
-    });
-    
-
-    
-=======
         const terapeutaNome = document.getElementById('terapeutaFilter').value;  // Get the selected therapist name
         console.log('Selected Therapist:', terapeutaNome);  // Debugging line
         
@@ -304,7 +250,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
->>>>>>> 8051eacca80926afeee9b02002f8811a1de471c7
+    
     //funções de busca de paciente e terapeuta
     $(document).ready(function () {
         $("#paciente").on("input", function () {
