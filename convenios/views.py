@@ -33,11 +33,11 @@ class ConvenioDetailView(DetailView):
 
 class ConvenioUpdateView(UpdateView):
     model = models.Convenio
-    template_name = 'Convenio-update.html'
+    template_name = 'convenio-update.html'
     form_class = forms.ConvenioForm
     success_url = reverse_lazy('convenio-list')
 
 class ConvenioDeleteView(DeleteView):
     model = models.Convenio
-    template_name = 'Convenio-delete.html'
+    template_name = 'convenio-delete.html'
     success_url = reverse_lazy('convenio-list')

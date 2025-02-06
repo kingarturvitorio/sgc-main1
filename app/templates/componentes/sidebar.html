@@ -39,10 +39,14 @@
             <li><a href="{% url 'dashboard' %}">Consultas</a></li>
           </ul>
         </li>
+	{% endif %}
+	{% if perms.calendario.add_event %}
         <li><a><i class="fa fa-edit"></i> Cadastrar <span class="fa fa-chevron-down"></span></a>
           <ul class="nav child_menu">
             <li><a href="{% url 'paciente-list' %}">Paciente</a></li>
-            <li><a href="{% url 'terapeuta-list' %}">Terapeuta</a></li>
+            {% endif %}
+	    {% if perms.calendario.change_event %}
+	    <li><a href="{% url 'terapeuta-list' %}">Terapeuta</a></li>
             <li><a href="{% url 'convenio-list' %}">Convenio</a></li>
             <li><a href="{% url 'prontuario-list' %}">Prontuário</a></li>
             <li><a href="{% url 'register' %}">Usuário</a></li>

@@ -27,6 +27,14 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+CSRF_TRUSTED_ORIGINS = ['https://institutotoffoli.com.br', 'http://institutotoffoli.com.br', 'https://www.institutotoffoli.com.br']
+
+CORS_ORIGIN_WHITELIST = [
+    'https://institutotoffoli.com.br',
+    'http://institutotoffoli.com.br',
+    'https://institutotoffoli.com.br',
+    ]
+
 import os
 
 # Application definition

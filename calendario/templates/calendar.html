@@ -140,9 +140,8 @@
                 </row>    
                 
                 <div class="modal-footer">
-                  {% if perms.calendario.change_event %}
                   <button type="button" class="btn btn-success" id="confirmEventBtn">Confirmar Agendamento</button>
-                  
+		  {% if perms.calendario.change_event %}                  
                   <button type="button" class="btn btn-danger" id="deleteEventBtn">Deletar Agendamento Diário</button>
                 <!-- Botão para deletar todos os eventos de um paciente -->
                     <button type="button" class="btn btn-danger" id="deleteAllEventsBtn" data-paciente-id="{{ paciente.id }}">Deletar Todos os Agendamentos</button>
