@@ -17,7 +17,10 @@ urlpatterns = [
     path("event/edit/<int:pk>/", views.EventEdit.as_view(), name="event_edit"),
     path('event/delete_all/<int:paciente_id>/', views.delete_all_events, name='delete_all_events'),
     path('filter_events/', views.filter_events, name='filter_events'),  # Add this line
+<<<<<<< HEAD
     path('get_terapeutas/', views.get_terapeutas, name='get_terapeutas'),
+=======
+>>>>>>> 8051eacca80926afeee9b02002f8811a1de471c7
 ]
 
 # from django.urls import path

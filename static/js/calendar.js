@@ -47,7 +47,10 @@ function formatDate(date) {
 
 document.addEventListener('DOMContentLoaded', function () {
     const calendarEl = document.getElementById('calendar');
+<<<<<<< HEAD
     
+=======
+>>>>>>> 8051eacca80926afeee9b02002f8811a1de471c7
     const calendar = new FullCalendar.Calendar(calendarEl, {
         locale: 'pt-br',
         headerToolbar: {
@@ -63,6 +66,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     calendar.render();
+<<<<<<< HEAD
         // Buscar terapeutas ao carregar a página
     console.log("Iniciando requisição para obter terapeutas...");
     $.ajax({
@@ -94,6 +98,11 @@ document.addEventListener('DOMContentLoaded', function () {
     // Event form submission
     $('#newEventForm').on('submit', handleNewEventSubmission);
     
+=======
+
+    // Event form submission
+    $('#newEventForm').on('submit', handleNewEventSubmission);
+>>>>>>> 8051eacca80926afeee9b02002f8811a1de471c7
 
         // Show All Events Button
     document.getElementById('showAllEventsButton').addEventListener('click', function() {
@@ -105,11 +114,15 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
             const response = await $.ajax({
                 url: '/get/event/',
+<<<<<<< HEAD
                 method: 'GET',
                 data: {
                     start_date: fetchInfo.startStr, // Passando o intervalo de datas
                     end_date: fetchInfo.endStr
                 }
+=======
+                method: 'GET'
+>>>>>>> 8051eacca80926afeee9b02002f8811a1de471c7
             });
             successCallback(response);
         } catch (error) {
@@ -234,6 +247,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
      // Filter button functionality
      document.getElementById('filterButton').addEventListener('click', function() {
+<<<<<<< HEAD
         const terapeutaNome = document.getElementById('terapeutaFilter').value; // Nome do terapeuta selecionado
     
         // Obtendo a visualização atual do calendário
@@ -268,6 +282,29 @@ document.addEventListener('DOMContentLoaded', function () {
     
 
     
+=======
+        const terapeutaNome = document.getElementById('terapeutaFilter').value;  // Get the selected therapist name
+        console.log('Selected Therapist:', terapeutaNome);  // Debugging line
+        
+        $.ajax({
+            type: 'GET',
+            url: '/filter_events/',  // Ensure this matches your Django URL
+            data: { 'terapeuta_nome': terapeutaNome },
+            success: function(data) {
+                console.log('Fetched Events:', data);  // Debugging line
+                calendar.removeAllEvents();  // Clear existing events
+
+                data.forEach(eventData => {
+                    calendar.addEvent(eventData);  // Add the filtered events to the calendar
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error('Error fetching filtered events: ', error);
+            }
+        });
+    });
+
+>>>>>>> 8051eacca80926afeee9b02002f8811a1de471c7
     //funções de busca de paciente e terapeuta
     $(document).ready(function () {
         $("#paciente").on("input", function () {
