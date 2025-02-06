@@ -8204,7 +8204,7 @@ h1, h2, h3, h4, h5,
     right: 0;
     bottom: 0;
     content: '';
-    opacity: .4;
+    opacity: 0;
     z-index: -1; }
   @media (min-width: 992px) {
     .text-wrap {
@@ -8214,6 +8214,7 @@ h1, h2, h3, h4, h5,
   .login-wrap {
     width: 60%; } }
 
+    
 .text-wrap .text {
   color: rgba(255, 255, 255, 0.8); }
   .text-wrap .text h2 {
@@ -8232,6 +8233,12 @@ h1, h2, h3, h4, h5,
       display: block;
       font-weight: 400;
       color: rgba(0, 0, 0, 0.4); }
+
+
+
+.bg-toffoli {
+        background-color: #F3CC6B !important;
+}
 
 .form-group label {
   font-weight: 500;

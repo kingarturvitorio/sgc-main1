@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'relatorios',
     'calendario',
     'sitelumini',
+    'convenios'
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
@@ -112,7 +113,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTH_USER_MODEL = "usuarios.User"
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 

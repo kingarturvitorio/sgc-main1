@@ -1,0 +1,46 @@
+{% extends 'componentes/base_site.html' %}
+
+{% block content %}
+
+<div class="right_col" role="main">
+    <div class="">
+        <div class="page-title">
+            <div class="title_left">
+                <h3>Informações Convenio</h3>
+            </div>
+
+        </div>
+        <div class="clearfix"></div>
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                    <div class="x_title">
+                        <h2>Deletar Convenio:</h2>
+                        <div class="clearfix"></div>
+                    </div>
+
+                    <div class="x_content">
+                        <div class="card">
+                            <div class="card-body">
+                                <p class="card-text">Tem certeza de que deseja excluir o Convenio <strong> {{object.nome_convenio}}</strong></p>
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger mt-3">Deletar</button>
+                                </form>
+
+                                <a href="{% url 'convenio-list' %}" class="btn btn-info btn-sm">Voltar para lista
+                                    Convenios</a>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+</div>
+{% endblock %}

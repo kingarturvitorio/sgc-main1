@@ -3,23 +3,17 @@ from django import forms
 from . import models
 from datetime import timedelta
 
+
 class EventForm(forms.ModelForm):
 
     class Meta:
         model = models.Event
-        fields = ['paciente', 'terapeuta', 'cidade', 
+        fields = ['paciente', 'terapeuta', 'convenio', 'cidade', 
                     'tipo_terapia', 'guia', 'start_time', 'end_time', 'descricao', 'confirmado']
         widgets = {
-            "paciente": forms.Select(
-                attrs={"class": "form-control"}
-            ),
-            "terapeuta": forms.Select(
-                attrs={"class": "form-control"}
-            ),
-            "cidade": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Nome da cidade",
-                }
-            ),
+            'paciente': forms.TextInput(attrs={'class': 'form-control'}),
+            'terapeuta': forms.TextInput(attrs={'class': 'form-control'}),
+            'cidade': forms.TextInput(attrs={'class': 'form-control'}),
             "start_time": DateInput(
                 attrs={"type": "datetime-local", "class": "form-control"},
                 format="%Y-%m-%dT%H:%M",
@@ -38,6 +32,7 @@ class EventForm(forms.ModelForm):
     def save(self, commit=True):
         instance = super(EventForm, self).save(commit=False)
         instance.end_time = instance.start_time + timedelta(minutes=30)
+
         if commit:
             instance.save()
         return instance

@@ -13,6 +13,7 @@
 <div class="right_col" role="main">
     <div class="">
         <div class="page-title">
+            <!-- Filtro de Terapeuta -->
             <div class="title_left">
                 <h3>Calendário</h3>
             </div>
@@ -26,59 +27,25 @@
                         <h2>Agendamento de Consultas</h2>
                         <div class="clearfix"></div>
                     </div>
+                    <div class="x_title">
+                        <h2>Filtrar agendamento por terapeuta</h2>
+                        <div class="p-2">
+                        <select id="terapeutaFilter" style="margin-left: 10px">
+                            <option value="">Selecione um Terapeuta</option>
+                        </select>
+                        <button id="filterButton">Filtrar Agendamento</button><button id="showAllEventsButton">Todos Agendamento</button>
+                    </div>
+                        <div class="clearfix"></div>
+                    </div>
                     <div class="x_content">
                         <div id="calendar" style="width:100%;"></div>
                     </div>
                 </div>
             </div>
-          
-
-            <div class="clearfix"></div>
-            <div class="x_content"></div>
-            
-            <div class="row">
-              <div class="col-md-12">
-                <div class="tile">
-                  <div class="tile-body">
-                    <div class="table-responsive">
-                      <div id="sampleTable_wrapper" class="dataTables_wrapper container-fluid dt-bootstrap4 no-footer">
-                        <div class="row">
-                          <div class="col-sm-12">
-                            <table class="table table-hover table-bordered dataTable no-footer" id="sampleTable" role="grid" aria-describedby="sampleTable_info">
-                              <thead>
-                                <tr role="row">
-                                  <th>Nome Paciente</th>
-                                  <th>Nome Terapeuta</th>
-                                  <th>N° Guia</th>
-                                  <th>Dia e hora início Consulta</th>
-                                </tr>
-                              </thead>
-                              <tbody id="eventTableBody">
-                                <!-- As linhas da tabela serão adicionadas aqui via JavaScript -->
-                                                 <!-- Listando os eventos já existentes -->
-                                  {% for event in events %}
-                                  <tr>
-                                    <td>{{ event.paciente }}</td>
-                                    <td>{{ event.terapeuta }}</td>
-                                    <td>{{ event.guia }}</td>
-                                    <td>{{ event.start_time|date:"d/m/Y H:i" }}</td>
-                                  </tr>
-                                {% endfor %}
-                              </tbody>
-                            </table>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          
-        </div>
-    </div>
+          </div>
 </div>
 
+{% if perms.calendario.add_event %}
 <!-- Modal para Novo Agendamento -->
 <div id="CalenderModalNew" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
@@ -92,11 +59,17 @@
                     {% csrf_token %}
                     <div class="form-group">
                         <label for="paciente">Nome Paciente:</label>
-                        {{ form.paciente }}
+                        <input type="text" id="paciente" name="paciente" class="form-control" placeholder="Digite o nome do paciente">
+                        <ul id="paciente-suggestions" class="list-group" style="display: none; position: absolute;"></ul> <!-- Lista de sugestões -->
                     </div>
                     <div class="form-group">
                         <label for="terapeuta">Nome Terapeuta:</label>
-                        {{ form.terapeuta }}
+                        <input type="text" id="terapeuta" name="terapeuta" class="form-control" placeholder="Digite o nome do terapeuta">
+                        <ul id="terapeuta-suggestions" class="list-group" style="display: none; position: absolute;"></ul> <!-- Lista de sugestões -->
+                    </div>
+                    <div class="form-group">
+                        <label for="convenio">Nome Convenio:</label>
+                        <input type="text" id="convenio" name="convenio" class="form-control" placeholder="Digite o nome do Convenio">
                     </div>
                     <div class="form-group">
                         <label for="cidade">Cidade:</label>
@@ -109,6 +82,16 @@
                     <div class="form-group">
                         <label for="guia">Número da Guia:</label>
                         {{ form.guia }}
+                    </div>
+                    <div class="form-group">
+                      <label for="replicar">
+                          <input type="checkbox" id="replicar" name="replicar"> Fixar este agendamento semanalmente por 12 meses
+                      </label>
+                    </div>
+                    <div class="form-group">
+                        <label for="1h"> Caso deseje o agendamento de 1h, marcar o campo:
+                            <input type="checkbox" id="1hora" name="tempo" value="1h"> 1h
+                        </label>
                     </div>
                     <div class="form-group">
                         <label for="start_time">Data Inicial Consulta:</label>
@@ -124,7 +107,9 @@
         </div>
     </div>
 </div>
+{% endif %}
 
+{% if perms.calendario.add_event %}
 <!-- Modal para Editar Agendamento -->
 <div id="CalenderModalEdit" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
@@ -143,6 +128,10 @@
                   <p id="nome_terapeuta"></p>
                 </row>
                 <row>
+                    <h2>Nome Convenio:</h2>
+                    <p id="nome_convenio"></p>
+                  </row>
+                <row>
                   <h2>Número da Guia:</h2>
                   <p id="numero_guia"></p>
                 </row>                
@@ -153,12 +142,17 @@
                 </row>    
                 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-success" id="confirmEventBtn">Confirmar Agendamento</button>
-                    <button type="button" class="btn btn-danger" id="deleteEventBtn">Deletar</button>
+                  <button type="button" class="btn btn-success" id="confirmEventBtn">Confirmar Agendamento</button>
+                  {% if perms.calendario.change_event %}
+                  <button type="button" class="btn btn-danger" id="deleteEventBtn">Deletar Agendamento Diário</button>
+                <!-- Botão para deletar todos os eventos de um paciente -->
+                    <button type="button" class="btn btn-danger" id="deleteAllEventsBtn" data-paciente-id="{{ paciente.id }}">Deletar Todos os Agendamentos</button>
+                  {% endif %}
                 </div>
             </div>
         </div>
     </div>
+    {% endif %}
 </div>
 {% endblock content %}
 
