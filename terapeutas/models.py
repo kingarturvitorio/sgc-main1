@@ -34,7 +34,7 @@ class Terapeuta(models.Model):
             
         # Incrementa a métrica toda vez que um evento é criado
         if not self.pk:  # Se o evento é novo (não tem chave primária ainda)
-            self.metric_terapeuta = Terapeuta.objects.count() + 1
+            self.metric_terapeuta =+ 1
 
         super(Terapeuta, self).save(*args, **kwargs)
 
