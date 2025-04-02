@@ -303,8 +303,8 @@ def get_events(request):
         paciente_id = None
 
         try:
-            paciente = Paciente.objects.get(nome=paciente_nome)
-            paciente_id = paciente.id
+            paciente = Paciente.objects.filter(nome=paciente_nome).first()
+            paciente_id = paciente.id if paciente else None
         except Paciente.DoesNotExist:
             paciente_id = None
 
@@ -371,8 +371,8 @@ def filter_events(request):
                 paciente_id = None
 
                 try:
-                    paciente = Paciente.objects.get(nome=paciente_nome)
-                    paciente_id = paciente.id
+                    paciente = Paciente.objects.filter(nome=paciente_nome).first()
+                    paciente_id = paciente.id if paciente else None
                 except Paciente.DoesNotExist:
                     paciente_id = None
 
