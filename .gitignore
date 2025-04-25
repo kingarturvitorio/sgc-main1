@@ -6,4 +6,6 @@ runServer.bat
 */db.sqlite3
 */db.sqlite3
 */db2.sqlite3
+db.sqlite3
+db2.sqlite3
 uploads
