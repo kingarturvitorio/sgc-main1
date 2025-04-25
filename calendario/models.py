@@ -57,6 +57,13 @@ class Event(models.Model):
     descricao = models.TextField(blank=True, null=True)
     confirmado = models.BooleanField(default=False)
 
+
+    # Pagamento
+    foi_pago = models.BooleanField(default=False)
+    valor_pago = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
+    comprovante = models.FileField(upload_to='comprovantes/', null=True, blank=True)
+    pagamento_pendente = models.BooleanField(default=False)
+    
     # Campo de métrica para contar eventos
     metric_count = models.IntegerField(default=0, editable=False)
 

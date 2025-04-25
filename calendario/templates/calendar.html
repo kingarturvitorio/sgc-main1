@@ -4,183 +4,232 @@
 {% block title %}Agendamentos{% endblock title %}
 
 {% block stylesheets %}
-    {{ block.super }}
-    <link href="{% static 'calender/main.css' %}" rel="stylesheet" />
-    <link href="{% static 'css/calendar.css' %}" rel="stylesheet" />
+{{ block.super }}
+<link href="{% static 'calender/main.css' %}" rel="stylesheet" />
+<link href="{% static 'css/calendar.css' %}" rel="stylesheet" />
 {% endblock stylesheets %}
 
 {% block content %}
 <div class="right_col" role="main">
-    <div class="">
-        <div class="page-title">
-            <!-- Filtro de Terapeuta -->
-            <div class="title_left">
-                <h3>Calendário</h3>
-            </div>
-        </div>
-
-        <div class="clearfix"></div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="x_panel">
-                    <div class="x_title">
-                        <h2>Agendamento de Consultas</h2>
-                        <div class="clearfix"></div>
-                    </div>
-                    <div class="x_title">
-                        <h2>Filtrar agendamento por terapeuta</h2>
-                        <div class="p-2">
-                        <select id="terapeutaFilter" style="margin-left: 10px">
-                            <option value="">Selecione um Terapeuta</option>
-<<<<<<< HEAD
-=======
-                            {% for event in events %}
-                                <option value="{{ event.terapeuta }}">{{ event.terapeuta }}</option>
-                            {% endfor %}
->>>>>>> 8051eacca80926afeee9b02002f8811a1de471c7
-                        </select>
-                        <button id="filterButton">Filtrar Agendamento</button><button id="showAllEventsButton">Todos Agendamento</button>
-                    </div>
-                        <div class="clearfix"></div>
-                    </div>
-                    <div class="x_content">
-                        <div id="calendar" style="width:100%;"></div>
-                    </div>
-                </div>
-            </div>
-          </div>
-</div>
-
-{% if perms.calendario.add_event %}
-<!-- Modal para Novo Agendamento -->
-<div id="CalenderModalNew" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">Adicionar novo agendamento</h4>
-                <button type="button" class="close" data-dismiss="modal">×</button>
-            </div>
-            <div class="modal-body">
-                <form id="newEventForm">
-                    {% csrf_token %}
-                    <div class="form-group">
-                        <label for="paciente">Nome Paciente:</label>
-                        <input type="text" id="paciente" name="paciente" class="form-control" placeholder="Digite o nome do paciente">
-                        <ul id="paciente-suggestions" class="list-group" style="display: none; position: absolute;"></ul> <!-- Lista de sugestões -->
-                    </div>
-                    <div class="form-group">
-                        <label for="terapeuta">Nome Terapeuta:</label>
-                        <input type="text" id="terapeuta" name="terapeuta" class="form-control" placeholder="Digite o nome do terapeuta">
-                        <ul id="terapeuta-suggestions" class="list-group" style="display: none; position: absolute;"></ul> <!-- Lista de sugestões -->
-                    </div>
-                    <div class="form-group">
-                        <label for="convenio">Nome Convenio:</label>
-                        <input type="text" id="convenio" name="convenio" class="form-control" placeholder="Digite o nome do Convenio">
-                    </div>
-                    <div class="form-group">
-                        <label for="cidade">Cidade:</label>
-                        {{ form.cidade }}
-                    </div>
-                    <div class="form-group">
-                        <label for="tipo_terapia">Tipo Terapia:</label>
-                        {{ form.tipo_terapia }}
-                    </div>
-                    <div class="form-group">
-                        <label for="guia">Número da Guia:</label>
-                        {{ form.guia }}
-                    </div>
-                    <div class="form-group">
-                      <label for="replicar">
-                          <input type="checkbox" id="replicar" name="replicar"> Fixar este agendamento semanalmente por 12 meses
-                      </label>
-                    </div>
-                    <div class="form-group">
-<<<<<<< HEAD
-                        <label for="1h"> Caso deseje o agendamento de 1h, marcar o campo:
-                            <input type="checkbox" id="1hora" name="tempo" value="1h"> 1h
-                        </label>
-                    </div>
-                    <div class="form-group">
-=======
->>>>>>> 8051eacca80926afeee9b02002f8811a1de471c7
-                        <label for="start_time">Data Inicial Consulta:</label>
-                        {{ form.start_time }}
-                    </div>
-                    <div class="form-group">
-                        <label for="descricao">Observações:</label>
-                        {{ form.descricao }}
-                    </div>
-                    <button type="submit" class="btn btn-primary">Salvar</button>
-                </form>
-            </div>
-        </div>
+  <div class="">
+    <div class="page-title">
+      <!-- Filtro de Terapeuta -->
+      <div class="title_left">
+        <h3>Calendário</h3>
+      </div>
     </div>
-</div>
-{% endif %}
 
-{% if perms.calendario.add_event %}
-<!-- Modal para Editar Agendamento -->
-<div id="CalenderModalEdit" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">Editar Agendamento</h4>
-                <button type="button" class="close" data-dismiss="modal">×</button>
+    <div class="clearfix"></div>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="x_panel">
+          <div class="x_title">
+            <h2>Agendamento de Consultas</h2>
+            <div class="clearfix"></div>
+          </div>
+          <div class="x_title">
+            <h2>Filtrar agendamento por terapeuta</h2>
+            <div class="p-2">
+              <select id="terapeutaFilter" style="margin-left: 10px">
+                <option value="">Selecione um Terapeuta</option>
+              </select>
+              <button id="filterButton">Filtrar Agendamento</button><button id="showAllEventsButton">Todos
+                Agendamento</button>
             </div>
-            <div class="modal-body">
-                <row>
-                  <h2>Nome Paciente:</h2>
-                  <p id="nome_paciente"></p>
-                </row>
-                <row>
-                  <h2>Nome Terapeuta:</h2>
-                  <p id="nome_terapeuta"></p>
-                </row>
-                <row>
-                    <h2>Nome Convenio:</h2>
-                    <p id="nome_convenio"></p>
-                  </row>
-                <row>
-                  <h2>Número da Guia:</h2>
-                  <p id="numero_guia"></p>
-                </row>                
-                <row>
-                  <h2>Data inicial e final:</h2>
-                  <p id="start_event_detail"></p>
-                  <p id="end_event_detail"></p>
-                </row>    
-                
-                <div class="modal-footer">
-<<<<<<< HEAD
-                  <button type="button" class="btn btn-success" id="confirmEventBtn">Confirmar Agendamento</button>
-		  {% if perms.calendario.change_event %}                  
-=======
-<<<<<<< HEAD
-                  <button type="button" class="btn btn-success" id="confirmEventBtn">Confirmar Agendamento</button>
-                  {% if perms.calendario.change_event %}
-=======
-                  {% if perms.calendario.change_event %}
-                  <button type="button" class="btn btn-success" id="confirmEventBtn">Confirmar Agendamento</button>
-                  
->>>>>>> 8051eacca80926afeee9b02002f8811a1de471c7
->>>>>>> 2a03beae563a5656c02cd29cc6419d734698926f
-                  <button type="button" class="btn btn-danger" id="deleteEventBtn">Deletar Agendamento Diário</button>
-                <!-- Botão para deletar todos os eventos de um paciente -->
-                    <button type="button" class="btn btn-danger" id="deleteAllEventsBtn" data-paciente-id="{{ paciente.id }}">Deletar Todos os Agendamentos</button>
-                  {% endif %}
-                </div>
-            </div>
+            <div class="clearfix"></div>
+          </div>
+          <div class="x_content">
+            <div id="calendar" style="width:100%;"></div>
+          </div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  {% if perms.calendario.add_event and perms.calendario.view_event %}
+  <!-- Modal para Novo Agendamento -->
+  <div id="CalenderModalNew" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Adicionar novo agendamento</h4>
+          <button type="button" class="close" data-dismiss="modal">×</button>
+        </div>
+        <div class="modal-body">
+          <form id="newEventForm">
+            {% csrf_token %}
+            <div class="form-group">
+              <label for="paciente">Nome Paciente:</label>
+              <input type="text" id="paciente" name="paciente" class="form-control"
+                placeholder="Digite o nome do paciente">
+              <ul id="paciente-suggestions" class="list-group" style="display: none; position: absolute;"></ul>
+              <!-- Lista de sugestões -->
+            </div>
+            <div class="form-group">
+              <label for="terapeuta">Nome Terapeuta:</label>
+              <input type="text" id="terapeuta" name="terapeuta" class="form-control"
+                placeholder="Digite o nome do terapeuta">
+              <ul id="terapeuta-suggestions" class="list-group" style="display: none; position: absolute;"></ul>
+              <!-- Lista de sugestões -->
+            </div>
+            <div class="form-group">
+              <label for="convenio">Nome Convenio:</label>
+              <input type="text" id="convenio" name="convenio" class="form-control"
+                placeholder="Digite o nome do Convenio">
+            </div>
+            <div class="form-group">
+              <label for="cidade">Cidade:</label>
+              {{ form.cidade }}
+            </div>
+            <div class="form-group">
+              <label for="tipo_terapia">Tipo Terapia:</label>
+              {{ form.tipo_terapia }}
+            </div>
+            <div class="form-group">
+              <label for="guia">Número da Guia:</label>
+              {{ form.guia }}
+            </div>
+            <div class="form-group">
+              <label for="replicar">
+                <input type="checkbox" id="replicar" name="replicar"> Fixar este agendamento semanalmente por 12 meses
+              </label>
+            </div>
+            <div class="form-group">
+              <label for="1h"> Caso deseje o agendamento de 1h, marcar o campo:
+                <input type="checkbox" id="1hora" name="tempo" value="1h"> 1h
+              </label>
+            </div>
+            <div class="form-group">
+              <label for="start_time">Data Inicial Consulta:</label>
+              {{ form.start_time }}
+            </div>
+            <div class="form-group">
+              <label for="descricao">Observações:</label>
+              {{ form.descricao }}
+            </div>
+            <button type="submit" class="btn btn-primary">Salvar</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  {% if perms.calendario.add_event %}
+  <!-- Modal para Editar Agendamento -->
+  <div id="CalenderModalEdit" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Editar Agendamento</h4>
+          <button type="button" class="close" data-dismiss="modal">×</button>
+        </div>
+        <div class="modal-body">
+          <row>
+            <h2>Nome Paciente:</h2>
+            <p id="nome_paciente"></p>
+          </row>
+          <row>
+            <h2>Nome Terapeuta:</h2>
+            <p id="nome_terapeuta"></p>
+          </row>
+          <row>
+            <h2>Nome Convenio:</h2>
+            <p id="nome_convenio"></p>
+          </row>
+          <row>
+            <h2>Número da Guia:</h2>
+            <p id="numero_guia"></p>
+          </row>
+          <row>
+            <h2>Data inicial e final:</h2>
+            <p id="start_event_detail"></p>
+            <p id="end_event_detail"></p>
+          </row>
+          {% if perms.calendario.change_event %}
+          <row>
+            <h2>Status do Pagamento:</h2>
+            <div id="status_pagamento"></div>
+          </row>
+          {% endif %}
+
+          <div class="modal-footer">
+            {% if perms.calendario.view_event %}
+            <button type="button" class="btn btn-success" id="confirmEventBtn">Confirmar Agendamento</button>
+            {% endif %}
+            <!-- Botão para abrir prontuário -->
+            {% if perms.prontuarios.change_prontuario %}
+            <a href="#" class="btn btn-info" id="openProntuarioBtn">Abrir Prontuário</a>
+            <a href="#" class="btn btn-info" id="botaoVerProntuarios" target="_blank" style="display: none;">Ver
+              Prontuários Anteriores</a>
+            {% endif %}
+            {% if perms.calendario.change_event %}
+            <button type="button" class="btn btn-danger" id="deleteEventBtn">Deletar Agendamento Diário</button>
+            <!-- Botão para deletar todos os eventos de um paciente -->
+            <button type="button" class="btn btn-danger" id="deleteAllEventsBtn"
+              data-paciente-id="{{ paciente.id }}">Deletar Todos os Agendamentos</button>
+            
+            <button type="button" class="btn btn-warning" id="deleteFutureEventsBtn">Deletar Todos Agendamentos Futuros</button>
+
+            {% endif %}
+
+          </div>
+        </div>
+      </div>
     </div>
     {% endif %}
+  </div>
+
+  <!-- Modal para pagamento -->
+  <div class="modal fade" id="PagamentoModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <form id="pagamentoForm" enctype="multipart/form-data">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Confirmação de Pagamento</h5>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+          </div>
+  
+          <div class="modal-body">
+            <p>O agendamento foi pago?</p>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="foi_pago" id="pagoSim" value="sim">
+              <label class="form-check-label" for="pagoSim">Sim</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="foi_pago" id="pagoNao" value="nao">
+              <label class="form-check-label" for="pagoNao">Não</label>
+            </div>
+  
+            <div id="detalhesPagamento" style="display:none;" class="mt-3">
+              <div class="form-group">
+                <label for="valor_pago">Valor Pago (R$):</label>
+                <input type="number" step="0.01" class="form-control" name="valor_pago" id="valor_pago">
+              </div>
+              <div class="form-group">
+                <label for="comprovante">Comprovante:</label>
+                <input type="file" class="form-control" name="comprovante" id="comprovante">
+              </div>
+            </div>
+          </div>
+  
+          <div class="modal-footer">
+            <input type="hidden" name="event_id" id="pagamento_event_id">
+            <button type="submit" class="btn btn-success">Confirmar Pagamento</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
 </div>
 {% endblock content %}
 
 {% block extrascripts %}
 
-  <script type="text/javascript">
-    const csrfToken = '{{ csrf_token }}';
-  </script>
-    <script src="{% static 'calender/main.js' %}"></script>
-    <script src="{% static 'js/calendar.js' %}"></script>
+<script type="text/javascript">
+  const csrfToken = '{{ csrf_token }}';
+</script>
+<script src="{% static 'calender/main.js' %}"></script>
+<script src="{% static 'js/calendar.js' %}"></script>
 {% endblock extrascripts %}

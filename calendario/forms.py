@@ -9,7 +9,7 @@ class EventForm(forms.ModelForm):
     class Meta:
         model = models.Event
         fields = ['paciente', 'terapeuta', 'convenio', 'cidade', 
-                    'tipo_terapia', 'guia', 'start_time', 'end_time', 'descricao', 'confirmado']
+                    'tipo_terapia', 'guia', 'start_time', 'end_time', 'descricao', 'confirmado', 'valor_pago', 'comprovante' ]
         widgets = {
             'paciente': forms.TextInput(attrs={'class': 'form-control'}),
             'terapeuta': forms.TextInput(attrs={'class': 'form-control'}),

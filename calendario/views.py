@@ -10,6 +10,7 @@ from django.views.generic import View, ListView, CreateView, DetailView, UpdateV
 from . import models, forms 
 from terapeutas.models import Terapeuta
 from pacientes.models import Paciente
+from prontuarios.models import Prontuario
 import calendar
 from django.shortcuts import get_object_or_404
 from calendario.utils import Calendar
@@ -17,12 +18,9 @@ from calendario.utils import Calendar
 from datetime import timedelta, datetime, date
 import pytz
 
-<<<<<<< HEAD
 from django.utils.dateparse import parse_datetime
 
 
-=======
->>>>>>> 8051eacca80926afeee9b02002f8811a1de471c7
 import logging
 
 logger = logging.getLogger(__name__)
@@ -119,15 +117,11 @@ def create_event(request):
         start_time = form.cleaned_data["start_time"]
         descricao = form.cleaned_data["descricao"]
         replicar = request.POST.get('replicar') == 'on'  # Captura o estado do checkbox
-<<<<<<< HEAD
         periodo = request.POST.get('tempo')  # Captura o campo 'tempo' (checkbox)
-=======
->>>>>>> 8051eacca80926afeee9b02002f8811a1de471c7
 
         # Calcula automaticamente o `end_time` (30 minutos após o `start_time`)
         if not start_time:
             return JsonResponse({'error': 'Data inicial inválida'}, status=400)
-<<<<<<< HEAD
         
 
         # Define o tempo de duração baseado no checkbox
@@ -135,9 +129,6 @@ def create_event(request):
             end_time = start_time + timedelta(hours=1)
         else:  
             end_time = start_time + timedelta(minutes=30)  # Padrão
-=======
-        end_time = start_time + timedelta(minutes=30)
->>>>>>> 8051eacca80926afeee9b02002f8811a1de471c7
 
         # Busca a cor do terapeuta
         try:
@@ -159,20 +150,16 @@ def create_event(request):
             descricao=descricao,
         )
         
-        if created:
-            print(f"Evento criado com ID: {event.id}")
-        else:
-            print(f"Evento já existente com ID: {event.id}")
+        # if created:
+        #     print(f"Evento criado com ID: {event.id}")
+        # else:
+        #     print(f"Evento já existente com ID: {event.id}")
 
         # Lógica para replicar o evento semanalmente por 12 meses
         if replicar:
             for semana in range(1, 53):  # Próximas 52 semanas (12 meses)
                 novo_start_time = start_time + timedelta(weeks=semana)
-<<<<<<< HEAD
-                novo_end_time = novo_start_time + timedelta(hours=1 if periodo == "1h" else 30)
-=======
-                novo_end_time = novo_start_time + timedelta(minutes=30)
->>>>>>> 8051eacca80926afeee9b02002f8811a1de471c7
+                novo_end_time = novo_start_time + timedelta(hours=1 if periodo == "1h" else 0.5)
                 models.Event.objects.create(
                     paciente=paciente,
                     terapeuta=terapeuta,
@@ -215,38 +202,110 @@ def delete_event(request, event_id):
         return JsonResponse({'message': 'Error!'}, status=400)
 
 def delete_all_events(request, paciente_id):
-    # Verifica se o paciente existe
-    paciente = get_object_or_404(Paciente, id=paciente_id)
-    
-    # Deleta todos os eventos associados a este paciente
-    events_deleted, _ = models.Event.objects.filter(paciente=paciente).delete()
+    if request.method == 'POST':
+        terapeuta_nome = request.POST.get('terapeuta_nome')  # Obtendo o terapeuta enviado
 
-    if events_deleted > 0:
+        paciente = get_object_or_404(Paciente, id=paciente_id)
+
+        # Filtrar apenas os eventos desse paciente com esse terapeuta
+        events = models.Event.objects.filter(paciente=paciente.nome, terapeuta=terapeuta_nome)
+
+        if not events.exists():
+            return JsonResponse({'success': False, 'message': 'Nenhum evento encontrado para este paciente e terapeuta.'})
+
+        # Deletando os eventos filtrados
+        events_deleted, _ = events.delete()
+
         return JsonResponse({'success': True, 'message': f'{events_deleted} eventos deletados com sucesso!'})
-    else:
-        return JsonResponse({'success': False, 'message': 'Nenhum evento encontrado para este paciente.'})
+    
+    return JsonResponse({'success': False, 'message': 'Método inválido'})
 
+def delete_future_events(request, paciente_id):
+    if request.method == 'POST':
+        data_referencia = request.POST.get('start_time')  # Data do evento clicado
+        terapeuta_nome = request.POST.get('terapeuta_nome')
+
+        if not data_referencia:
+            return JsonResponse({'success': False, 'message': 'Data de referência ausente.'})
+
+        try:
+            # Convertendo string ISO para datetime
+            data_referencia = parse_datetime(data_referencia)
+            if not data_referencia:
+                raise ValueError("Data inválida")
+
+            # Filtra eventos daquele paciente a partir da data selecionada
+            eventos = models.Event.objects.filter(
+                paciente__iexact=Paciente.objects.get(id=paciente_id).nome.strip(),
+                start_time__gte=data_referencia
+            )
+
+            if terapeuta_nome:
+                eventos = eventos.filter(terapeuta__iexact=terapeuta_nome.strip())
+
+            count = eventos.count()
+            eventos.delete()
+
+            return JsonResponse({'success': True, 'deleted': count})
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)})
+    return JsonResponse({'success': False, 'message': 'Método não permitido.'}, status=405)
+
+# def confirm_event(request, event_id):
+#     if request.method == 'POST':
+#         try:
+#             event = models.Event.objects.get(id=event_id)
+#             # Update the event's confirmation status
+#             event.confirmado = True  # Assuming you have a 'confirmed' field in your model
+            
+#             event.confirmed_color = 'green'
+#             event.save()
+#             return JsonResponse({
+#                 'status': 'success',
+#                 'backgroundColor': event.confirmed_color,
+#                 'borderColor': event.confirmed_color
+#             })
+#         except models.Event.DoesNotExist:
+#             return JsonResponse({'error': 'Event not found'}, status=404)
+#         except Terapeuta.DoesNotExist:
+#             return JsonResponse({'error': 'Therapist not found'}, status=404)
+
+#     return JsonResponse({'error': 'Invalid request'}, status=400)
+    
 def confirm_event(request, event_id):
     if request.method == 'POST':
         try:
             event = models.Event.objects.get(id=event_id)
-            # Update the event's confirmation status
-            event.confirmado = True  # Assuming you have a 'confirmed' field in your model
-            
+
+            # Dados do formulário
+            foi_pago = request.POST.get('foi_pago') == 'sim'
+            valor_pago = request.POST.get('valor_pago')
+            comprovante = request.FILES.get('comprovante')
+
+            event.confirmado = True
             event.confirmed_color = 'green'
+            event.foi_pago = foi_pago
+
+            if foi_pago:
+                if valor_pago:
+                    event.valor_pago = valor_pago
+                if comprovante:
+                    event.comprovante = comprovante
+
             event.save()
+
             return JsonResponse({
                 'status': 'success',
                 'backgroundColor': event.confirmed_color,
-                'borderColor': event.confirmed_color
+                'foi_pago': event.foi_pago,
+                'valor_pago': str(event.valor_pago),
+                'comprovante_url': event.comprovante.url if event.comprovante else None,
             })
-        except models.Event.DoesNotExist:
-            return JsonResponse({'error': 'Event not found'}, status=404)
-        except Terapeuta.DoesNotExist:
-            return JsonResponse({'error': 'Therapist not found'}, status=404)
 
-    return JsonResponse({'error': 'Invalid request'}, status=400)
-    
+        except models.Event.DoesNotExist:
+            return JsonResponse({'error': 'Evento não encontrado'}, status=404)
+
+    return JsonResponse({'error': 'Requisição inválida'}, status=400)
 
 def next_week(request, event_id):
     event = get_object_or_404(models.Event, id=event_id)
@@ -275,7 +334,7 @@ def next_day(request, event_id):
     
 
 def get_events(request):
-    # Obtendo as datas da requisição GET
+
     start_date_str = request.GET.get('start_date')
     end_date_str = request.GET.get('end_date')
 
@@ -290,33 +349,49 @@ def get_events(request):
     except ValueError:
         return JsonResponse({"error": "Formato de data inválido"}, status=400)
 
-    # Filtra eventos dentro do intervalo de datas
-    events = models.Event.objects.filter(start_time__gte=start_date, end_time__lte=end_date)
+    # Verifica se o usuário pode ver todos os eventos
+    user = request.user
+    pode_ver_todos = user.is_superuser or user.groups.filter(name__in=['Agendamento', 'Administrativo']).exists()
 
+    # Busca todos os eventos, ou apenas do terapeuta correspondente ao nome do usuário
+    if pode_ver_todos:
+        events = models.Event.objects.filter(start_time__gte=start_date, end_time__lte=end_date)
+    else:
+        # Match pelo nome do terapeuta
+        nome_usuario = user.get_full_name().split()[0].lower() if user.get_full_name() else user.username.lower()
+        events = models.Event.objects.filter(
+            start_time__gte=start_date,
+            end_time__lte=end_date,
+            terapeuta__icontains=nome_usuario
+        )
+
+    # Continua o processamento dos eventos como já faz
     events_list = []
-    events_dict = {}  # Usaremos um dicionário para garantir unicidade
-
-    events_dict = {}  # Usaremos um dicionário para garantir unicidade
+    events_dict = {}
 
     for event in events:
-<<<<<<< HEAD
         terapeuta_nome = event.terapeuta
-        terapeuta_cor = None
+        terapeuta_cor = 'blue'
 
         try:
             terapeuta = Terapeuta.objects.get(nome_terapeuta=terapeuta_nome)
             terapeuta_cor = terapeuta.cor
         except Terapeuta.DoesNotExist:
-            terapeuta_cor = 'blue'
+            pass
 
         paciente_nome = event.paciente
         paciente_id = None
 
         try:
-            paciente = Paciente.objects.get(nome=paciente_nome)
-            paciente_id = paciente.id
+            paciente = Paciente.objects.filter(nome=paciente_nome).first()
+            paciente_id = paciente.id if paciente else None
         except Paciente.DoesNotExist:
-            paciente_id = None
+            pass
+
+        prontuario_id = None
+        prontuario = Prontuario.objects.filter(event=event).first()
+        if prontuario:
+            prontuario_id = prontuario.id
 
         background_color = event.confirmed_color if event.confirmado else terapeuta_cor
 
@@ -333,20 +408,17 @@ def get_events(request):
                     'terapeuta': str(event.terapeuta),
                     'convenio': event.convenio,
                     'guia': event.guia,
-                    'descricao': event.descricao
+                    'descricao': event.descricao,
+                    'prontuario_id': prontuario_id,
+                    'foi_pago': event.foi_pago,
+                    'valor_pago': str(event.valor_pago) if event.valor_pago else None,
+                    'comprovante_url': event.comprovante.url if event.comprovante else None,
                 }
             }
 
-    events_list = list(events_dict.values())
-    
-    print(f"Eventos retornados: {len(events_list)}")  # Debug
-
-    return JsonResponse(events_list, safe=False)
+    return JsonResponse(list(events_dict.values()), safe=False)
 
 
-from django.http import JsonResponse
-from datetime import datetime
-from .models import Event, Terapeuta, Paciente  # Certifique-se de importar os modelos corretos
 
 def filter_events(request):
     if request.method == 'GET':
@@ -363,7 +435,7 @@ def filter_events(request):
             end_date = datetime.fromisoformat(end_date[:10])  
 
             # ✅ Filtrar eventos pelo intervalo de tempo correto (Mês, Semana, Dia, Agenda)
-            eventos = Event.objects.filter(start_time__range=[start_date, end_date])
+            eventos = models.Event.objects.filter(start_time__range=[start_date, end_date])
 
             # ✅ Filtrar pelo nome do terapeuta, caso informado
             if terapeuta_nome:
@@ -385,8 +457,8 @@ def filter_events(request):
                 paciente_id = None
 
                 try:
-                    paciente = Paciente.objects.get(nome=paciente_nome)
-                    paciente_id = paciente.id
+                    paciente = Paciente.objects.filter(nome=paciente_nome).first()
+                    paciente_id = paciente.id if paciente else None
                 except Paciente.DoesNotExist:
                     paciente_id = None
 
@@ -426,115 +498,3 @@ def filter_events(request):
 def get_terapeutas(request):
     terapeutas = Terapeuta.objects.all().values('id', 'nome_terapeuta')  # Ajuste conforme seu modelo
     return JsonResponse(list(terapeutas), safe=False)
-=======
-    
-        # Busca o terapeuta relacionado com base em algum atributo no evento
-        terapeuta_nome = event.terapeuta  # Ajuste conforme seu modelo
-        terapeuta_cor = None
-
-        # Tenta buscar a cor do terapeuta pelo nome
-        try:
-            terapeuta = Terapeuta.objects.get(nome_terapeuta=terapeuta_nome)
-            terapeuta_cor = terapeuta.cor
-        except Terapeuta.DoesNotExist:
-            terapeuta_cor = 'blue'  # Cor padrão caso não encontre
-
-        # Se o paciente for armazenado como uma string (nome)
-        paciente_nome = event.paciente  # Aqui estamos pegando o nome do paciente do evento
-        paciente_id = None  # Já que não é uma ForeignKey, não há um ID relacionado diretamente
-
-        # Caso o paciente tenha sido criado e você queira associar um paciente pelo nome
-        try:
-            paciente = Paciente.objects.get(nome=paciente_nome)  # Supondo que você tem um campo nome
-            paciente_id = paciente.id  # Agora que temos o paciente, podemos pegar o ID dele
-        except Paciente.DoesNotExist:
-            paciente_id = None  # Caso o paciente não exista, deixamos como None ou algum valor padrão
-
-        # Use the confirmed color if the event is confirmed
-        background_color = event.confirmed_color if event.confirmado else terapeuta_cor
-
-        # Adiciona o evento ao dicionário, garantindo unicidade pelo ID
-        if event.id not in events_dict:
-            events_dict[event.id] = {
-                'id': event.id,
-                'title': paciente_nome,  # Nome do paciente como título
-                'start': event.start_time.isoformat(),
-                'end': event.end_time.isoformat(),
-                'backgroundColor': background_color,
-                'extendedProps': {
-                    'paciente': paciente_nome,
-                    'paciente_id': paciente_id,
-                    'terapeuta': str(event.terapeuta),
-                    'convenio': event.convenio,
-                    'guia': event.guia,
-                    'descricao': event.descricao
-                }
-            }
-
-    # Converte os valores do dicionário em uma lista para o JSON
-    events_list = list(events_dict.values())
-    
-    print(f"Eventos retornados: {len(events_list)}")
-    
-    return JsonResponse(events_list, safe=False)
-
-
-def filter_events(request):
-    if request.method == 'GET':
-        terapeuta_nome = request.GET.get('terapeuta_nome')  # Get the therapist name from the request
-
-        # Filter events by the therapist's name
-        events = models.Event.objects.filter(terapeuta=terapeuta_nome)  # Adjust according to your model
-
-        events_dict = {}  # Use a dictionary to ensure uniqueness
-
-        for event in events:
-            # Fetch the therapist's color based on the event's therapist name
-            terapeuta_cor = None
-            try:
-                terapeuta = Terapeuta.objects.get(nome_terapeuta=terapeuta_nome)
-                terapeuta_cor = terapeuta.cor
-            except Terapeuta.DoesNotExist:
-                terapeuta_cor = 'blue'  # Default color if not found
-
-            # Get the patient name and ID
-            paciente_nome = event.paciente  # Assuming this is a string
-            paciente_id = None  # No direct ID since it's not a ForeignKey
-
-            try:
-                paciente = Paciente.objects.get(nome=paciente_nome)  # Assuming you have a field for the name
-                paciente_id = paciente.id  # Get the patient's ID
-            except Paciente.DoesNotExist:
-                paciente_id = None  # If the patient does not exist
-
-            # Use the confirmed color if the event is confirmed
-            background_color = event.confirmed_color if event.confirmado else terapeuta_cor
-
-            # Add the event to the dictionary, ensuring uniqueness by ID
-            if event.id not in events_dict:
-                events_dict[event.id] = {
-                    'id': event.id,
-                    'title': paciente_nome,  # Patient's name as title
-                    'start': event.start_time.isoformat(),
-                    'end': event.end_time.isoformat(),
-                    'backgroundColor': background_color,
-                    'extendedProps': {
-                        'paciente': paciente_nome,
-                        'paciente_id': paciente_id,
-                        'terapeuta': str(event.terapeuta),
-                        'convenio': event.convenio,
-                        'guia': event.guia,
-                        'descricao': event.descricao
-                    }
-                }
-
-        # Convert the dictionary values to a list for JSON
-        events_list = list(events_dict.values())
-        
-        print(f"Filtered Events Returned: {len(events_list)}")
-        
-        return JsonResponse(events_list, safe=False)  # Return the data as JSON
-
-    return JsonResponse({'error': 'Invalid request'}, status=400)
-
->>>>>>> 8051eacca80926afeee9b02002f8811a1de471c7

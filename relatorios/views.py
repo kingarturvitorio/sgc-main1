@@ -5,6 +5,7 @@ from django.shortcuts import render
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 from pacientes.models import Paciente
 from calendario.models import Event
+from terapeutas.models import Terapeuta
 # Create your views here.
 
 from django.views.generic.base import View
@@ -28,13 +29,24 @@ class RelatorioView(ListView):
         return queryset
     
 
-def rel_aso(request, id):
-    paciente = Paciente.objects.get(id=id)
-    params = {
+def rel_aso(request, paciente_id):
+    paciente = Paciente.objects.get(id=paciente_id)
+    terapias = Event.objects.filter(paciente=paciente.nome).order_by('start_time')
+
+    terapeuta = None
+    if terapias.exists():
+        terapeuta_nome = terapias.first().terapeuta
+        try:
+            terapeuta = Terapeuta.objects.get(nome_terapeuta=terapeuta_nome)
+        except Terapeuta.DoesNotExist:
+            terapeuta = None
+
+    context = {
         'paciente': paciente,
-        'request': request,
+        'terapias': terapias,
+        'terapeuta': terapeuta,
     }
-    return Render.render('rel_aso.html', params, 'rel-aso')
+    return render(request, 'rel_aso.html', context)
 
 class Render:
     @staticmethod

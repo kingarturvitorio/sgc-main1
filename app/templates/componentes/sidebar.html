@@ -40,7 +40,7 @@
           </ul>
         </li>
         {% endif %}
-        {% if perms.calendario.add_event %}
+        {% if perms.calendario.add_event and perms.calendario.view_event  %}
         <li><a><i class="fa fa-edit"></i> Cadastrar <span class="fa fa-chevron-down"></span></a>
           <ul class="nav child_menu">
             <li><a href="{% url 'paciente-list' %}">Paciente</a></li>

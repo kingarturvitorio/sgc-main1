@@ -3,3 +3,7 @@ venv
 runServer.bat
 */migrations
 */.lock
+*/db.sqlite3
+*/db.sqlite3
+*/db2.sqlite3
+uploads

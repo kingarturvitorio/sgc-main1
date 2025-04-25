@@ -1,5 +1,4 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
 <html lang='pt-br'>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -28,9 +27,9 @@
         </tr>
         <tr>
             <td class="coluna1" width="80">Teraputa:</td>
-            <td class="coluna2">{{ paciente.nome }}</td>
+            <td class="coluna2">{{ terapeuta.nome }}</td>
             <td class="coluna1" width="80">Tipo clinico:</td>
-            <td class="coluna2">{{ paciente.carteirinha }}</td>
+            <td class="coluna2">{{ terapia.tipo_terapia }}</td>
         </tr>
     </table>
     
@@ -41,29 +40,28 @@
     realizou as terapias, conforme discriminação abaixo:</p>
 
     <h3>Terapias Realizadas</h3>
-    <p> Inserir as terapias realizadas </p>
 
+    {% for terapia in terapias %}
     <table>
         <tr>
-            <tr>
-                <td class="coluna1" width="80">Data inico da Consulta</td>
-                <td class="coluna2">{{ terapia.start_time }}</td>
-            </tr>
-            <tr>
-                <td class="coluna1" width="80">Data fim da Consulta</td>
-                <td class="coluna2">{{ terapia.end_time }}</td>
-            </tr>
-            <tr>
-                <td class="coluna1" width="80">Tipo clinico:</td>
-                <td class="coluna2">{{ terapia.tipo_terapia }}</td>
-            </tr>
-            <tr>
-                <td class="coluna1" width="80">Guia:</td>
-                <td class="coluna2">{{ terapia.guia }}</td>
-            </tr>
+            <td class="coluna1">Data início da Consulta</td>
+            <td class="coluna2">{{ terapia.start_time|date:"d/m/Y H:i" }}</td>
+        </tr>
+        <tr>
+            <td class="coluna1">Data fim da Consulta</td>
+            <td class="coluna2">{{ terapia.end_time|date:"d/m/Y H:i" }}</td>
+        </tr>
+        <tr>
+            <td class="coluna1">Tipo clínico</td>
+            <td class="coluna2">{{ terapia.tipo_terapia }}</td>
+        </tr>
+        <tr>
+            <td class="coluna1">Guia</td>
+            <td class="coluna2">{{ terapia.guia }}</td>
         </tr>
     </table>
-
+    <hr>
+    {% endfor %}
 
     <hr>
 

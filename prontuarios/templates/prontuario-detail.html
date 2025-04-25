@@ -31,14 +31,43 @@
                                     <p class="card-text">Prontuário do paciente: {{ object.prontuario }}</p>
                                 </div>
                             </div>
-                            <a href="{% url 'prontuario-list' %}" class="btn btn-info btn-sm">Voltar para lista
-                                prontuario</a>
+                            <a href="{% url 'calendario:calendar' %}" class="btn btn-info btn-sm">Voltar para agendamento</a>
                         </div>
                     </div>
                 </div>
             </div>
+            <div class="clearfix"></div>
 
+            <div class="x_panel">
+
+            
+            <div class="x_content">
+
+            <hr>
+            <h4>Histórico de Prontuários do Paciente</h4>
+            
+            {% if outros_prontuarios %}
+                <ul class="list-group">
+                    {% for pront in outros_prontuarios %}
+                        <li class="list-group-item">
+                            <strong>Data:</strong> {{ pront.event.start_time|date:"d/m/Y H:i" }}<br>
+                            <strong>Terapeuta:</strong> {{ pront.event.terapeuta }}<br>
+                            <a href="{% url 'prontuario-detail' pront.id %}" class="btn btn-sm btn-primary mt-1">
+                                Ver Prontuário
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>Este paciente não possui outros prontuários registrados.</p>
+            {% endif %}
+         </div>  
+        </div>
+        </div>  
+        </div>        
         </div>
     </div>
+</div>
 
-    {% endblock %}
+
+{% endblock %}
