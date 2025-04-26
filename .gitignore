@@ -1,7 +1,6 @@
 venv
 */_pycache_
 runServer.bat
-*/migrations
 */.lock
 */db.sqlite3
 */db.sqlite3
